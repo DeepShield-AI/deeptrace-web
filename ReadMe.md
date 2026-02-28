@@ -2,13 +2,13 @@
 <a href="#dummy"><img src="https://i.hd-r.cn/fd6bbc44-c7e2-4b7e-9fda-0f87d7265364.png" alt="struture" /></a>
 
 # 2. 各组件介绍
-## Adapter：处理外部服务 
+## Adapter：处理外部服务，主要是面向前端接口，实现一些校验逻辑
 **程序架构组织**
 
-| 组件      | 包名        | 功能                     |
-|---------|-----------|--------------------------|
-| Adapter | web       | 处理页面请求的Controller |
-| Adapter | scheduler | 处理定时器的请求         |
+| 组件      | 包名        | 功能                   |
+|---------|-----------|----------------------|
+| Adapter | web       | 处理web页面请求的Controller |
+| Adapter | scheduler | 处理定时器的请求             |
 
 **类命名规范**
 
@@ -110,7 +110,7 @@
 
 
 
-## Common：常量或工具类
+## Common：用于存放通用的枚举、常量或工具类
 **程序架构组织**
 
 | 组件      | 包名        | 功能          |
@@ -127,8 +127,24 @@
 | constants    | XXXContant.java |
 | enums       | XXXEnum.java    |
 
+## Framework：应用内部的通用框架，比如拦截器、模板代码、扩展框架等
+**程序架构组织**
+
+| 组件      | 包名        | 功能   |
+|---------|-----------|------|
+| Framwork  | aop       | 拦截器  |
+| Framwork  | exception | 异常处理 |
+
+
 
 ## Start：应用启用、全局配置等
 
 # 3. 模块之间的依赖关系--待补充
 <a href="#dummy"><img src="" alt="struture" /></a>
+
+
+# 4. 其他开发规范
+## 4.1 Exception抛出
+如果是开发者自行抛出的错误，更应该处理成业务错误 BizException，便于格式化出更友好的错误信息出来。
+
+## TODO
