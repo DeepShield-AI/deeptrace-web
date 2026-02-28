@@ -1,5 +1,5 @@
 # 1. 架构分层
-<a href="#dummy"><img src="https://i.hd-r.cn/fcfab3d9-ab25-45b6-905d-4c45f13b9204.png" alt="struture" /></a>
+<a href="#dummy"><img src="https://i.hd-r.cn/fd6bbc44-c7e2-4b7e-9fda-0f87d7265364.png" alt="struture" /></a>
 
 # 2. 各组件介绍
 ## Adapter：处理外部服务 
