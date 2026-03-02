@@ -17,6 +17,14 @@
             <groupId>cn.edu.qcl</groupId>
             <artifactId>deeptrace-web-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.edu.qcl</groupId>
+            <artifactId>deeptrace-web-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.edu.qcl</groupId>
+            <artifactId>deeptrace-web-framework</artifactId>
+        </dependency>
 
         <!-- COLA components -->
         <dependency>

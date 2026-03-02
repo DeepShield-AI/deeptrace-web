@@ -17,6 +17,10 @@
             <groupId>cn.edu.qcl</groupId>
             <artifactId>deeptrace-web-domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.edu.qcl</groupId>
+            <artifactId>deeptrace-web-framework</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>

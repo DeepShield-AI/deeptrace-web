@@ -12,7 +12,7 @@
 
 **类命名规范**
 
-| 包名        | 对象     | 示例                |
+| 包名        | 功能     | 示例                |
 |-----------|--------|-------------------|
 | web       | web请求  | XXXXController.java     |
 | scheduler | 定时任务请求 | XXXXScheduler.java |
@@ -35,7 +35,7 @@
 
 **类命名规范**
 
-| 包名            | 对象      | 示例                 |
+| 包名            | 功能      | 示例                 |
 |----------------|---------|--------------------|
 | executor       | 命令执行器   | XXXXCmdExe.java    |
 | executor.query | 查询执行器   | XXXXQueryExe.java        |
@@ -54,11 +54,11 @@
 
 **类命名规范**
 
-| 种类        | 对象                                        | 示例                           |
+| 包名        | 功能                                        | 示例                           |
 |-----------|-------------------------------------------|------------------------------|
 | api       | API  service                              | XXXServiceI.java             |
 | dto       | 增删改服务入参                                   | XXXCmd.java                  |
-| dto       | 查询服务入参                                    | XXXQry.java                  |
+| dto       | 查询服务入参                                    | XXXQry.java、PageQuery.java   |
 | dto.data  | 查询服务返回结果（对外统一接口返回结果，统一用Response或它的子类来封装。） | XXXDto.java 、 ErrorCode.java |
 | dto.event | 领域驱动事件入参                                  | XXXDto.java                  |
 
@@ -80,10 +80,10 @@
 
 **类命名规范**
 
-| 种类       | 对象     | 示例              |
-|----------|--------|-----------------|
-| gateway  | 防腐服务定义 | XXXGateway.java |
-| ability  | 领域能力实现 | XXXDomainService.java |
+| 包名      | 功能     | 示例              |
+|---------|--------|-----------------|
+| gateway | 防腐服务定义 | XXXGateway.java |
+| ability | 领域能力实现 | XXXDomainService.java |
 
 
 ## Infrastructure：处理外部依赖，封装与外部系统的交互逻辑，比如数据库、缓存、消息队列、第三方服务调用等
@@ -103,9 +103,9 @@
 
 **类命名规范**
 
-| 种类        | 对象                                        | 示例             |
-|-----------|--------------|----------------|
-| api       | 防腐服务实现  | XXXGatewayImpl.java |
+| 包名  | 功能                                        | 示例             |
+|-----|--------------|----------------|
+| api | 防腐服务实现  | XXXGatewayImpl.java |
 
 
 
@@ -121,7 +121,7 @@
 
 **类命名规范**
 
-| 种类        | 示例              |
+| 包名        | 示例              |
 |-----------|-----------------|
 | utils     | XXXUtil.java    |
 | constants | XXXContant.java |
@@ -152,6 +152,7 @@
 - 如果是单个概念返回使用Cola框架的SingleResponse,
 - 如果是多个概念返回使用Cola框架的MultiResponse.
   - 如果概念是某个明确的对象，例如MultiResponse<XXXDTO>
+- 如果是分页查询的结果，使用Cola框架的PageResponse
 
 ## 4.3 错误码规范
 一个错误码编码只能用一次。不允许重复编码！不允许重复编码！不允许重复编码！

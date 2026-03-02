@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-    <artifactId>cola-dummy-aggregation-parent</artifactId>
-    <groupId>com.alibaba.cola</groupId>
-    <version>dummy-SNAPSHOT</version>
-  </parent>
+
 
     <groupId>cn.edu.qcl</groupId>
     <artifactId>deeptrace-web-parent</artifactId>
@@ -33,6 +29,8 @@
         <module>deeptrace-web-domain</module>
         <module>deeptrace-web-infrastructure</module>
         <module>start</module>
+        <module>deeptrace-web-common</module>
+        <module>deeptrace-web-framework</module>
     </modules>
 
     <dependencies>
@@ -74,6 +72,16 @@
             <dependency>
                 <groupId>cn.edu.qcl</groupId>
                 <artifactId>deeptrace-web-infrastructure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.edu.qcl</groupId>
+                <artifactId>deeptrace-web-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.edu.qcl</groupId>
+                <artifactId>deeptrace-web-framework</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--Project modules End-->

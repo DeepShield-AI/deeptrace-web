@@ -21,6 +21,15 @@
             <groupId>cn.edu.qcl</groupId>
             <artifactId>deeptrace-web-infrastructure</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.edu.qcl</groupId>
+            <artifactId>deeptrace-web-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.edu.qcl</groupId>
+            <artifactId>deeptrace-web-framework</artifactId>
+        </dependency>
+
 
         <dependency>
             <groupId>com.alibaba.cola</groupId>

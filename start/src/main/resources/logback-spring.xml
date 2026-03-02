@@ -5,6 +5,7 @@
     <property name="APP_NAME" value="start" />
     <property name="LOG_PATH" value="${user.home}/${APP_NAME}/logs" />
     <property name="LOG_FILE" value="${LOG_PATH}/application.log" />
+    <property name="ERROR_LOG_FILE" value="${LOG_PATH}/error.log" />
 
     <appender name="APPLICATION"
         class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -17,7 +18,26 @@
             <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>7</maxHistory>
             <maxFileSize>50MB</maxFileSize>
-            <totalSizeCap>20GB</totalSizeCap>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ERROR_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ERROR_LOG_FILE}</file>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${ERROR_LOG_FILE}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <maxFileSize>50MB</maxFileSize>
+            <totalSizeCap>5GB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
@@ -33,16 +53,19 @@
         <!--定义了两个appender，日志会通过往这两个appender里面写-->
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="APPLICATION" />
+        <appender-ref ref="ERROR_FILE" />
     </root>
 
     <!--应用日志-->
     <!--这个logger没有指定appender，它会继承root节点中定义的那些appender-->
-    <logger name="com.alibaba.demo" level="DEBUG"/>
+    <!--对 cn.edu.qcl 包启用DEBUG级别-->
+    <!--<logger name="cn.edu.qcl" level="DEBUG"/>-->
 
     <!--数据库日志-->
     <!--由于这个logger自动继承了root的appender，root中已经有stdout的appender了，自己这边又引入了stdout的appender-->
     <!--如果没有设置 additivity="false" ,就会导致一条日志在控制台输出两次的情况-->
     <!--additivity表示要不要使用rootLogger配置的appender进行输出-->
+    <!--即数据库日志仅在控制台打印，方便开发时查看SQL执行情况，而不需要在生产环境的日志文件中保存大量详细的数据库操作日志-->
     <logger name="com.apache.ibatis" level="TRACE" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
