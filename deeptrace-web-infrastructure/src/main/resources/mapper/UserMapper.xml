@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.edu.qcl.customer.CustomerMapper">
+<mapper namespace="cn.edu.qcl.mapper.mysql.CustomerMapper">
     <select id="getById" resultType="cn.edu.qcl.customer.CustomerDO" resultMap="customerMap">
         select * from customer where customer_id = #{id}
     </select>

@@ -14,4 +14,11 @@
     <packaging>jar</packaging>
     <name>deeptrace-web-common</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

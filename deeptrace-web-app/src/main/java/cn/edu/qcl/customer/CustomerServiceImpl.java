@@ -7,12 +7,12 @@ import cn.edu.qcl.api.CustomerServiceI;
 import cn.edu.qcl.dto.CustomerAddCmd;
 import cn.edu.qcl.dto.CustomerListByNameQry;
 import cn.edu.qcl.dto.data.CustomerDTO;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import cn.edu.qcl.customer.executor.CustomerAddCmdExe;
 import cn.edu.qcl.customer.executor.query.CustomerListByNameQryExe;
 
-import javax.annotation.Resource;
 
 
 @Service

@@ -92,14 +92,15 @@
 - log: 处理log业务
 - user: 处理 user 业
 - agent: 处理agent业务
+- mapper: 存放所有的XXXMapper.java,支持仅Mapper文件被Mybatis扫描
 **程序架构组织**
 
-| 组件       | 包名/类名               | 功能                       |
-|----------|---------------------|--------------------------|
-| Infrastructure | XXXGatewayImpl.java | 防腐服务实现 -- 外部依赖实现逻辑，比如数据库 |
-| Infrastructure | XXXMapper.java      | 数据库映射                    |
-| Infrastructure | config              | 配置信息 --比如外部diamond配置     |
-| Infrastructure | XXXDO.java          | 存储的对象                    |
+| 组件       | 包名/类名                 | 功能                       |
+|----------|-----------------------|--------------------------|
+| Infrastructure | XXXGatewayImpl.java   | 防腐服务实现 -- 外部依赖实现逻辑，比如数据库 |
+| Infrastructure | mapper/XXXMapper.java | 数据库映射                    |
+| Infrastructure | config                | 配置信息 --比如外部diamond配置     |
+| Infrastructure | XXXDO.java            | 存储的对象                    |
 
 **类命名规范**
 

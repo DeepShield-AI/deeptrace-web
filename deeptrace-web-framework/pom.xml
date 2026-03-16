@@ -10,6 +10,36 @@
     </parent>
 
     <artifactId>deeptrace-web-framework</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>cn.edu.qcl</groupId>
+            <artifactId>deeptrace-web-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.edu.qcl</groupId>
+            <artifactId>deeptrace-web-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cola</groupId>
+            <artifactId>cola-component-exception</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+
+    </dependencies>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

@@ -2,6 +2,7 @@ package cn.edu.qcl.customer;
 
 import cn.edu.qcl.customer.gateway.CustomerGateway;
 
+import cn.edu.qcl.mapper.mysql.CustomerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
