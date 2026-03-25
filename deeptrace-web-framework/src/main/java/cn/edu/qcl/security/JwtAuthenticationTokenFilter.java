@@ -2,6 +2,7 @@ package cn.edu.qcl.security;
 
 import cn.edu.qcl.api.UserServiceI;
 import cn.edu.qcl.dto.data.UserDTO;
+import cn.edu.qcl.utils.UserSessionUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,17 +44,23 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
-//        try {
+        // 如果请求头中有 X-API-Key，跳过 JWT 验证，交给 ApiKeyAuthenticationFilter 处理
+        String apiKey = request.getHeader("X-API-Key");
+        if (apiKey != null && !apiKey.isEmpty()) {
+            LOGGER.debug("X-API-Key detected, skipping JWT authentication");
+            chain.doFilter(request, response);
+            return;
+        }
 
         String authHeader = request.getHeader(this.tokenHeader);
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
             String authToken = authHeader.substring(this.tokenHead.length());// The part after "Bearer "
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
             LOGGER.info("checking username:{}", username);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (username != null && UserSessionUtils.getAuthentication() == null) {
                 UserDTO user = this.userServiceI.queryByUsername(username);
                 if (user !=null  && jwtTokenUtil.validateToken(authToken, user.getUsername())) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     LOGGER.info("authenticated user:{}", username);
                     SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -1,5 +1,6 @@
 package cn.edu.qcl.config;
 
+import cn.edu.qcl.security.ApiKeyAuthenticationFilter;
 import cn.edu.qcl.security.JwtAuthenticationTokenFilter;
 import cn.edu.qcl.security.RestAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 /**
  * 对于白名单中的 URL（如 /admin/login、/swagger-ui/ 等）：
- * 请求首先经过 JwtAuthenticationTokenFilter
+ * 请求首先经过 ApiKeyAuthenticationFilter，然后经过 JwtAuthenticationTokenFilter
  * 但即使没有 JWT token 或 token 无效，也不会阻止请求继续
  * 在 FilterSecurityInterceptor 中检查到该 URL 属于白名单
  * 直接允许访问，无需认证
  * 对于非白名单 URL：
- * 请求首先经过 JwtAuthenticationTokenFilter
- * 如果有有效 token，则设置认证信息
+ * 请求首先经过 ApiKeyAuthenticationFilter（处理 X-API-Key 认证）
+ * 然后经过 JwtAuthenticationTokenFilter（处理 JWT 认证）
+ * 如果有有效 token 或 API Key，则设置认证信息
  * 在 FilterSecurityInterceptor 中检查访问权限
  * 如果没有认证信息或权限不足，则被拒绝访问
  */
@@ -35,8 +37,18 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
     @Autowired
+    private ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+    @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
+    /**
+     * 配置Security
+     * 请求 → ApiKeyAuthenticationFilter → JwtAuthenticationTokenFilter → ... → FilterSecurityInterceptor
+     *  FilterSecurityInterceptor 检查到：当前请求不在白名单中 + Authentication 为 null（未认证），抛出 AccessDeniedException 或 AuthenticationCredentialsNotFoundException
+     * @param httpSecurity
+     * @return
+     * @throws Exception
+     */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(authorize -> {
@@ -60,7 +72,9 @@ public class SecurityConfig {
 
                 })
                 //自定义权限拦截器JWT过滤器
-                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                //API Key认证过滤器（在JWT过滤器之前执行）
+                .addFilterBefore(apiKeyAuthenticationFilter, JwtAuthenticationTokenFilter.class);
 
         return httpSecurity.build();
     }

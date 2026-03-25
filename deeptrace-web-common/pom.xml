@@ -19,6 +19,10 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.edu.qcl</groupId>
+            <artifactId>deeptrace-web-client</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -19,51 +19,51 @@ public class UserGatewayImpl implements UserGateway {
 
     @Override
     public int insert(UserDTO userDto) {
-        User user = new User();
-        user.setCreateTime(new Date());
-        user.setUpdateTime(new Date());
-        BeanUtils.copyProperties(userDto, user);
-        return userMapper.insert(user);
+        UserDO userDO = new UserDO();
+        userDO.setCreateTime(new Date());
+        userDO.setUpdateTime(new Date());
+        BeanUtils.copyProperties(userDto, userDO);
+        return userMapper.insert(userDO);
     }
 
     @Override
     public long count(UserDTO userDto) {
-        User user = new User();
-        BeanUtils.copyProperties(userDto, user);
-        userMapper.count(user);
+        UserDO userDO = new UserDO();
+        BeanUtils.copyProperties(userDto, userDO);
+        userMapper.count(userDO);
         return 0;
     }
 
     @Override
     public List<UserDTO> queryAllByLimit(UserDTO userDto, PageRequest pageRequest) {
-        User user = new User();
-        BeanUtils.copyProperties(userDto, user);
-        List<User> users = userMapper.queryAllByLimit(user, pageRequest);
-        if (users == null) {
+        UserDO userDO = new UserDO();
+        BeanUtils.copyProperties(userDto, userDO);
+        List<UserDO> userDOS = userMapper.queryAllByLimit(userDO, pageRequest);
+        if (userDOS == null) {
             return java.util.Collections.emptyList();
         }
-        return users.stream()
+        return userDOS.stream()
                 .map(this::convertToDTO)
                 .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
     public UserDTO queryByName(String username) {
-        User user = userMapper.queryByName(username);
-        return convertToDTO( user);
+        UserDO userDO = userMapper.queryByName(username);
+        return convertToDTO(userDO);
     }
 
     @Override
     public UserDTO queryById(Long userId) {
-        User user = userMapper.queryById(userId);
-        return convertToDTO( user);
+        UserDO userDO = userMapper.queryById(userId);
+        return convertToDTO(userDO);
     }
 
     @Override
     public int update(UserDTO userDto) {
-        User user = new User();
-        BeanUtils.copyProperties(userDto, user);
-        return userMapper.update(user);
+        UserDO userDO = new UserDO();
+        BeanUtils.copyProperties(userDto, userDO);
+        return userMapper.update(userDO);
     }
 
     @Override
@@ -78,12 +78,12 @@ public class UserGatewayImpl implements UserGateway {
 
 
 
-    private UserDTO convertToDTO(User user) {
-        if (user == null) {
+    private UserDTO convertToDTO(UserDO userDO) {
+        if (userDO == null) {
             return null;
         }
         UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(user, userDTO);
+        BeanUtils.copyProperties(userDO, userDTO);
         return userDTO;
     }
 }

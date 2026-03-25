@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.qcl.mapper.mysql.TokenMapper">
+
+    <resultMap type="cn.edu.qcl.user.TokenDO" id="TokenMap">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="tokenType" column="token_type" jdbcType="VARCHAR"/>
+        <result property="tokenValue" column="token_value" jdbcType="VARCHAR"/>
+        <result property="tokenName" column="token_name" jdbcType="VARCHAR"/>
+        <result property="readPermission" column="read_permission" jdbcType="BOOLEAN"/>
+        <result property="writePermission" column="write_permission" jdbcType="BOOLEAN"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+        <result property="lastUsedTime" column="last_used_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="deletedAt" column="deleted_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 插入Token -->
+    <insert id="insert" parameterType="cn.edu.qcl.user.TokenDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_token (user_id, token_type, token_value, token_name, 
+                               read_permission, write_permission, status, expire_time,
+                               create_time, update_time)
+        VALUES (#{userId}, #{tokenType}, #{tokenValue}, #{tokenName}, 
+                #{readPermission}, #{writePermission}, #{status}, #{expireTime},
+                NOW(), NOW())
+    </insert>
+
+    <!-- 根据ID查询Token -->
+    <select id="queryById" resultMap="TokenMap">
+        SELECT id, user_id, token_type, token_value, token_name,
+               read_permission, write_permission, status, expire_time,
+               last_used_time, create_time, update_time, deleted_at
+        FROM user_token
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据Token值查询Token -->
+    <select id="queryByTokenValue" resultMap="TokenMap">
+        SELECT id, user_id, token_type, token_value, token_name,
+               read_permission, write_permission, status, expire_time,
+               last_used_time, create_time, update_time, deleted_at
+        FROM user_token
+        WHERE token_value = #{tokenValue}
+    </select>
+
+    <!-- 根据用户ID和Token类型查询Token列表 -->
+    <select id="queryByUserIdAndType" resultMap="TokenMap">
+        SELECT id, user_id, token_type, token_value, token_name,
+               read_permission, write_permission, status, expire_time,
+               last_used_time, create_time, update_time, deleted_at
+        FROM user_token
+        WHERE user_id = #{userId}
+          AND token_type = #{tokenType}
+          AND status = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据用户ID查询所有有效的API Key -->
+    <select id="queryApiKeysByUserId" resultMap="TokenMap">
+        SELECT id, user_id, token_type, token_value, token_name,
+               read_permission, write_permission, status, expire_time,
+               last_used_time, create_time, update_time, deleted_at
+        FROM user_token
+        WHERE user_id = #{userId}
+          AND token_type = 'API_KEY'
+          AND status = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 更新Token权限 -->
+    <update id="updatePermission" parameterType="cn.edu.qcl.user.TokenDO">
+        UPDATE user_token
+        SET read_permission = #{readPermission},
+            write_permission = #{writePermission},
+            update_time = NOW()
+        WHERE id = #{id}
+          AND user_id = #{userId}
+          AND status = 1
+    </update>
+
+    <!-- 更新最后使用时间 -->
+    <update id="updateLastUsedTime">
+        UPDATE user_token
+        SET last_used_time = NOW(),
+            update_time = NOW()
+        WHERE token_value = #{tokenValue}
+          AND status = 1
+    </update>
+
+    <!-- 软删除Token -->
+    <update id="deleteByIdAndUserId">
+        UPDATE user_token
+        SET status = 0,
+            deleted_at = NOW(),
+            update_time = NOW()
+        WHERE id = #{id}
+          AND user_id = #{userId}
+          AND status = 1
+    </update>
+
+    <!-- 统计用户的API Key数量 -->
+    <select id="countApiKeysByUserId" resultType="long">
+        SELECT COUNT(*)
+        FROM user_token
+        WHERE user_id = #{userId}
+          AND token_type = 'API_KEY'
+          AND status = 1
+    </select>
+
+</mapper>

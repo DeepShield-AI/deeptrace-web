@@ -12,7 +12,7 @@ import java.util.Date;
  * 用户个人表(User)实体类
  *
  */
-public class User implements Serializable {
+public class UserDO implements Serializable {
     private static final long serialVersionUID = -17968002399328208L;
 
     /**

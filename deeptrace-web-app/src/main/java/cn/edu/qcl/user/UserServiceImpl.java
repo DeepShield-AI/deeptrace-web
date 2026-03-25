@@ -8,6 +8,7 @@ import cn.edu.qcl.enums.UserStatusEnum;
 import cn.edu.qcl.exception.Asserts;
 import cn.edu.qcl.security.JwtTokenUtil;
 import cn.edu.qcl.user.gateway.UserGateway;
+import cn.edu.qcl.utils.UserSessionUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -78,8 +79,7 @@ public class UserServiceImpl implements UserServiceI {
             if(Objects.equals(user.getStatus(), UserStatusEnum.DISABLED.getCode())){
                 Asserts.fail("帐号已被禁用");
             }
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserSessionUtils.setUser(user);
 
             token = jwtTokenUtil.generateToken(user);
             //根据用户名修改登录时间

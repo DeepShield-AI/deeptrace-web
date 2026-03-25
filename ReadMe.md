@@ -24,7 +24,7 @@
 - trace: 处理trace业务
 - metric: 处理metric业务
 - log: 处理log业务
-- user: 处理 user 业
+- userDO: 处理 userDO 业
 - agent: 处理agent业务
 **程序架构组织**
 
@@ -68,7 +68,7 @@
 - trace: 处理trace业务
 - metric: 处理metric业务
 - log: 处理log业务
-- user: 处理 user 业
+- userDO: 处理 userDO 业
 - agent: 处理agent业务
 **程序架构组织**
 
@@ -90,7 +90,7 @@
 - trace: 处理trace业务
 - metric: 处理metric业务
 - log: 处理log业务
-- user: 处理 user 业
+- userDO: 处理 userDO 业
 - agent: 处理agent业务
 - mapper: 存放所有的XXXMapper.java,支持仅Mapper文件被Mybatis扫描
 **程序架构组织**
