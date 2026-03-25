@@ -52,6 +52,17 @@
             <artifactId>minio</artifactId>
         </dependency>
 
+        <!-- ClickHouse JDBC Driver -->
+        <dependency>
+            <groupId>com.clickhouse</groupId>
+            <artifactId>clickhouse-jdbc</artifactId>
+        </dependency>
+
+        <!-- HikariCP for connection pooling -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
 
     </dependencies>
 </project>

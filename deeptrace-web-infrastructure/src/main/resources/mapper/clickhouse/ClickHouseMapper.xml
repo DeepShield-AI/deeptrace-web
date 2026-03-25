@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.qcl.mapper.clickhouse.ClickHouseMapper">
+
+    <resultMap id="UserMapResultMap" type="cn.edu.qcl.usermap.UserMapEntity">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- ClickHouse Mapper XML 配置 -->
+    <!-- 可以在此处定义更复杂的SQL查询 -->
+    <!-- 查询所有用户映射 -->
+    <select id="listAllUserMaps" resultType="cn.edu.qcl.usermap.UserMapEntity">
+        SELECT `_id` AS id, eth_type AS name
+        FROM flow_log.l4_flow_log
+                 LIMIT 5
+    </select>
+
+
+</mapper>

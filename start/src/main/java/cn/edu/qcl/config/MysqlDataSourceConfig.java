@@ -42,7 +42,7 @@ public class MysqlDataSourceConfig {
         SqlSessionFactoryBean fb = new SqlSessionFactoryBean();
         fb.setDataSource(dataSource);
         // 如果你把 mysql 的 XML mapper 放在特定目录，可配置 mapperLocations
-         fb.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/*.xml"));
+         fb.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/mysql/*.xml"));
         return fb.getObject();
     }
 
