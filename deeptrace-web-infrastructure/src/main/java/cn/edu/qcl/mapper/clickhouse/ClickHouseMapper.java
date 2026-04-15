@@ -41,7 +41,7 @@ public interface ClickHouseMapper {
      * 查询所有用户映射
      * @return 用户映射列表
      */
-    @Select("SELECT `_id` as id, eth_type as name FROM flow_log.l4_flow_log limit 5")
+//    @Select("SELECT `_id` as id, eth_type as name FROM flow_log.l4_flow_log limit 5")
     List<UserMapEntity> listAllUserMaps();
 
     /**

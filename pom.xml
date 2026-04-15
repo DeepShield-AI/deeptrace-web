@@ -161,6 +161,27 @@
                 <version>0.9.8</version>
             </dependency>
 
+            <!-- ClickHouse Client (for Java Client API) -->
+            <dependency>
+                <groupId>com.clickhouse</groupId>
+                <artifactId>clickhouse-client</artifactId>
+                <version>0.9.8</version>
+            </dependency>
+
+            <!-- ClickHouse HTTP Client -->
+            <dependency>
+                <groupId>com.clickhouse</groupId>
+                <artifactId>clickhouse-http-client</artifactId>
+                <version>0.9.8</version>
+            </dependency>
+
+            <!-- ClickHouse Data -->
+            <dependency>
+                <groupId>com.clickhouse</groupId>
+                <artifactId>clickhouse-data</artifactId>
+                <version>0.9.8</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
