@@ -1,5 +1,8 @@
 package cn.edu.qcl.clickhouse;
 
+import cn.edu.qcl.dto.data.SpanDTO;
+import cn.edu.qcl.dto.param.SpanQueryParam;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,4 +17,11 @@ public interface FlowLogService {
      * @return 查询结果列表
      */
     List<Map<String, Object>> queryL4FlowLog(int limit);
+
+    /**
+     * 查询 Span 数据
+     * @param queryParam 查询参数
+     * @return Span 数据列表
+     */
+    List<SpanDTO> querySpan(SpanQueryParam queryParam);
 }
