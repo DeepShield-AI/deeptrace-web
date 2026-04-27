@@ -1,3 +1,4 @@
+/*
 package cn.edu.qcl.web;
 
 import cn.edu.qcl.clickhouse.FlowLogService;
@@ -16,10 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+*/
 /**
  * Flow Log 查询控制器
- * 使用 ClickHouse Java Client 查询数据
- */
+ * 使用 ClickHouse Java Client 查询数据，通过 HTTP 协议 连接 ClickHouse。
+ *//*
+
 @RestController
 @RequestMapping("/api/flowlog")
 public class FlowLogController {
@@ -27,11 +30,13 @@ public class FlowLogController {
     @Autowired
     private FlowLogService flowLogService;
 
-    /**
+    */
+/**
      * 查询 L4 Flow Log 数据
      * @param limit 返回条数限制，默认 5
      * @return 查询结果
-     */
+     *//*
+
     @GetMapping("/l4")
     public Map<String, Object> queryL4FlowLog(
             @RequestParam(value = "limit", defaultValue = "5") int limit) {
@@ -48,7 +53,8 @@ public class FlowLogController {
         return result;
     }
 
-    /**
+    */
+/**
      * 查询 Span 数据
      * @param traceId TraceID（可选）
      * @param startDate 开始日期（可选，格式：yyyy-MM-dd）
@@ -57,7 +63,8 @@ public class FlowLogController {
      * @param orderBy 排序字段，默认 time
      * @param orderDirection 排序方向，默认 DESC
      * @return 查询结果
-     */
+     *//*
+
     @GetMapping("/l7")
     public Map<String, Object> querySpan(
             @RequestParam(value = "traceId", required = false) String traceId,
@@ -90,4 +97,4 @@ public class FlowLogController {
         }
         return result;
     }
-}
+}*/

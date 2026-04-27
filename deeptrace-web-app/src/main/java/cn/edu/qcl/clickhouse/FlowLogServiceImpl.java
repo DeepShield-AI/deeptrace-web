@@ -1,3 +1,4 @@
+/*
 package cn.edu.qcl.clickhouse;
 
 import cn.edu.qcl.dto.data.SpanDTO;
@@ -23,10 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+*/
 /**
  * Flow Log 查询服务实现
  * 使用 ClickHouse Java Client 查询数据
- */
+ *//*
+
 @Service
 public class FlowLogServiceImpl implements FlowLogService {
 
@@ -239,4 +242,4 @@ public class FlowLogServiceImpl implements FlowLogService {
             return null;
         }
     }
-}
+}*/
