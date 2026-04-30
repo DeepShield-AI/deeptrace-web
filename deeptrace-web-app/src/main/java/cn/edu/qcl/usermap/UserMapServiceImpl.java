@@ -24,31 +24,6 @@ public class UserMapServiceImpl implements UserMapServiceI {
         List<UserMapEntity> entities = clickHouseMapper.listAllUserMaps();
         return entities.stream().map(this::toDTO).collect(Collectors.toList());
     }
-
-    @Override
-    public UserMapDTO getById(Long id) {
-        UserMapEntity entity = clickHouseMapper.getUserMapById(id);
-        return entity != null ? toDTO(entity) : null;
-    }
-
-    @Override
-    public List<UserMapDTO> listByName(String name) {
-        List<UserMapEntity> entities = clickHouseMapper.listUserMapsByName(name);
-        return entities.stream().map(this::toDTO).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<UserMapDTO> listByPage(int page, int pageSize) {
-        int offset = (page - 1) * pageSize;
-        List<UserMapEntity> entities = clickHouseMapper.listUserMapsByPage(pageSize, offset);
-        return entities.stream().map(this::toDTO).collect(Collectors.toList());
-    }
-
-    @Override
-    public long count() {
-        return clickHouseMapper.countUserMaps();
-    }
-
     /**
      * 实体转DTO
      */
