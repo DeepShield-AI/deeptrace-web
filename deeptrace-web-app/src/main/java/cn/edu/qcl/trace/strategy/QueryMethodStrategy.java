@@ -41,18 +41,24 @@ public class QueryMethodStrategy implements FieldOptionsQueryStrategy {
     public FieldOptionsDTO query(FieldOptionQueryParam queryParam) {
         log.info("Executing query strategy for field: {}", queryParam.getField());
 
-        // Build SQL query
+        /*
+         * 构建SQL查询语句，格式为：
+         * SELECT ${field} FROM `${database}`.`${tableName}` WHERE ${filter} GROUP BY ${field}
+         */
         String sql = buildFieldOptionsQuerySql(queryParam);
         log.debug("Built SQL: {}", sql);
 
-        // Execute query via TraceByAPIQueryGateway
+        // 执行ClickHouse查询
         List<Map<String, Object>> queryData = traceByAPIQueryGateway.executeQuery(queryParam.getDatabase(), sql);
         log.info("Query returned {} records", queryData.size());
 
-        // Extract field values from query results and convert to List<String>
-        List<Object> fieldValues = extractFieldValues(queryData);
+        // 从查询结果中提取分组后的字段值列表
+        List<Object> fieldValues = extractGroupByFieldValues(queryData);
 
-        // Extract enum mappings
+        /*
+         * 获取字段的枚举映射关系并转换为FieldMapping对象列表
+         * 映射关系用于将ID转换为可读的名称，提升前端展示效果
+         */
         List<Map<String, Object>>  idNameMappings = idNameMappingGateway.getEnumMapping(queryParam.getField());
         List<FieldOptionsDTO.FieldMapping> fieldMappings = MapToEntity.mapListToEntityList(idNameMappings, FieldOptionsDTO.FieldMapping.class);
 
@@ -64,19 +70,23 @@ public class QueryMethodStrategy implements FieldOptionsQueryStrategy {
     }
 
     /**
-     * Extract field values from query results and convert to List<String>
-     * 
-     * @param queryData the query results from ClickHouse
-     * @return List of field values as strings
+     * 从Group by查询结果中提取分组后的字段值列表
+     * @param queryData ClickHouse查询返回的结果集，每个元素为一行记录的Map表示，
+     *                  key为字段名，value为字段的所有值；如果为null或空集合则返回空列表
+     * @return 包含第一条记录所有字段值的列表；如果输入为空则返回空列表
      */
-    private List<Object> extractFieldValues(List<Map<String, Object>> queryData) {
+    private List<Object> extractGroupByFieldValues(List<Map<String, Object>> queryData) {
         List<Object> fieldValues = new ArrayList<>();
         
         if (queryData == null || queryData.isEmpty()) {
             return fieldValues;
         }
 
-        fieldValues.add(queryData.get(0).values());
+        /*
+         * 提取第一条记录的所有字段值（.values()返回Collection<V>）
+         * 注意：这里只处理第一条记录，将所有字段值作为一个元素添加到列表中
+         */
+        fieldValues.addAll(queryData.get(0).values());
 
         return fieldValues;
     }

@@ -28,7 +28,7 @@ public class TraceQueryController {
      * 
      * @param database Database name (e.g., "flow_metrics")
      * @param tableName Table name (e.g., "application.1m")
-     * @param method Query method (e.g., "query")
+     * @param method Query method (e.g., "query","sql")
      * @param field Field to query (e.g., "XXX")
      * @param filter Filter condition (e.g., "time >= toDateTime('2026-04-27 09:58:26', 'Asia/Shanghai') AND time < toDateTime('2026-04-27 09:59:26', 'Asia/Shanghai')")
      * @return MetricQueryResult containing query data and enum mappings

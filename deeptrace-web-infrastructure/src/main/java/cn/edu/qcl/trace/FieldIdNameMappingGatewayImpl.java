@@ -3,6 +3,7 @@ package cn.edu.qcl.trace;
 import cn.edu.qcl.mapper.clickhouse.ClickHouseMapper;
 import cn.edu.qcl.trace.gateway.FieldIdNameMappingGateway;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -24,13 +25,42 @@ public class FieldIdNameMappingGatewayImpl implements FieldIdNameMappingGateway 
      */
     private static final Set<String> SPECIAL_DEVICE_FIELDS = new HashSet<>(Arrays.asList(
             "l3_device_id",
+            "l3_device_type",
             "auto_instance_id",
             "auto_service_id"
     ));
 
+    private static final Set<String> NORMAL_DEVICE_FIELDS = new HashSet<>(Arrays.asList(
+            "region_id",
+            "az_id",
+            "pod_cluster_id",
+            "pod_ns_id",
+            "pod_group_id",
+            "pod_id",
+            "pod_node_id",
+            "service_id",
+            "l3_epc_id",
+            "subnet_id"
+    ));
+
+
     @Resource
     private ClickHouseMapper clickHouseMapper;
 
+    /**
+     * 获取字段的枚举映射关系
+     * <p>
+     * 根据字段名称解析对应的资源表，从ClickHouse中查询ID到名称的映射关系。
+     * 对于特殊设备字段（如l3_device_id、auto_instance_id、auto_service_id）使用特殊的查询逻辑。
+     * </p>
+     *
+     * @param fieldName 字段名称，支持以下格式：
+     *                  - resourceStr_id：标准字段格式
+     *                  - resourceStr_id_0：带版本后缀的字段格式
+     *                  - resourceStr_id_1：带版本后缀的字段格式
+     *                  - 特殊设备字段：l3_device_id、auto_instance_id、auto_service_id
+     * @return 枚举映射列表，每个元素为包含id和name字段的Map；如果字段名为空或查询失败则返回空列表
+     */
     @Override
     public List<Map<String, Object>> getEnumMapping(String fieldName) {
         if (fieldName == null || fieldName.trim().isEmpty()) {
@@ -49,19 +79,28 @@ public class FieldIdNameMappingGatewayImpl implements FieldIdNameMappingGateway 
         try {
             List<Map<String, Object>> results;
             
+            /*
+             * 根据字段类型执行不同的查询策略：
+             * - 特殊设备字段：查询devicetype、deviceid和name，从flow_tag.device_map表获取数据
+             * - 标准字段：查询id和name，从对应的资源映射表获取数据
+             */
+            String sql="";
+            
             if (isSpecialDeviceField(fieldName)) {
-                // Special handling for device fields: SELECT devicetype, deviceid, name
-                String sql = "SELECT devicetype as  type, deviceid as id, name FROM flow_tag.device_map";
-                log.debug("Executing special device SQL: {}", sql);
-                results = clickHouseMapper.executeQuery(sql);
-                return results;
-            } else {
+                sql = "SELECT devicetype as  type, deviceid as id, name FROM flow_tag.device_map";
+            } else if (StringUtils.equalsIgnoreCase(fieldName, "host_id")) {
+                sql = "SELECT id, name FROM flow_tag.chost_map";
+            } else if (isNormalDeviceField(fieldName)) {
                 // Standard handling: SELECT id, name
-                String sql = String.format("SELECT id, name FROM %s", tableName);
-                log.debug("Executing standard SQL: {}", sql);
-                results = clickHouseMapper.executeQuery(sql);
-                return results;
+                sql = String.format("SELECT id, name FROM %s", tableName);
+               
+            }else {
+                log.info("Unsupported field name: {}", fieldName);
+                return Collections.emptyList();
             }
+            log.debug("Executing standard SQL: {}", sql);
+            results = clickHouseMapper.executeQuery(sql);
+            return results;
         } catch (Exception e) {
             log.error("Failed to get enum mapping for field: {}", fieldName, e);
             return Collections.emptyList();
@@ -104,6 +143,10 @@ public class FieldIdNameMappingGatewayImpl implements FieldIdNameMappingGateway 
     @Override
     public boolean isSpecialDeviceField(String fieldName) {
         return SPECIAL_DEVICE_FIELDS.contains(fieldName);
+    }
+    
+    public boolean isNormalDeviceField(String fieldName) {
+        return NORMAL_DEVICE_FIELDS.contains(fieldName);
     }
 
     /**

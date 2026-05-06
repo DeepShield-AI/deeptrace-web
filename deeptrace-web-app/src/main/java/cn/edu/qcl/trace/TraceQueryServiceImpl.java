@@ -45,7 +45,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         l7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("endpoint", "String", Arrays.asList("=", "IN")));
         l7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("response_status", "Int", Arrays.asList("=", "IN")));
         l7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("l7_protocol", "Int", Arrays.asList("=", "IN")));
-        l7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("trace_id", "String", Arrays.asList("=", "IN")));
+//        l7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("trace_id", "String", Arrays.asList("=", "IN")));
         TABLE_FILTER_FIELDS_MAP.put("flow_log.l7_flow_log", l7FlowLogFields);
 
         // apm.traces_view
@@ -71,7 +71,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         applicationFields.add(new FilterFieldsDTO.FilterFieldConfig("pod_node_id", "String", Arrays.asList("=", "IN")));
         applicationFields.add(new FilterFieldsDTO.FilterFieldConfig("service_id", "String", Arrays.asList("=", "IN")));
         applicationFields.add(new FilterFieldsDTO.FilterFieldConfig("l3_epc_id", "String", Arrays.asList("=", "IN")));
-        applicationFields.add(new FilterFieldsDTO.FilterFieldConfig("epc_id", "String", Arrays.asList("=", "IN")));
+//        applicationFields.add(new FilterFieldsDTO.FilterFieldConfig("epc_id", "String", Arrays.asList("=", "IN")));
         applicationFields.add(new FilterFieldsDTO.FilterFieldConfig("subnet_id", "String", Arrays.asList("=", "IN")));
         applicationFields.add(new FilterFieldsDTO.FilterFieldConfig("ip4", "String", Arrays.asList("=", "IN")));
         applicationFields.add(new FilterFieldsDTO.FilterFieldConfig("ip6", "String", Arrays.asList("=", "IN")));
@@ -86,6 +86,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         List<FilterFieldsDTO.FilterFieldConfig> applicationMapFields = new ArrayList<>();
         applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("app_service", "app_service", "String", Arrays.asList("=", "IN")));
         applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("app_instance", "app_instance", "String", Arrays.asList("=", "IN")));
+        applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("server_port", "server_port", "String", Arrays.asList("=", "IN")));
         applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("region_id", "region_id_1", "String", Arrays.asList("=", "IN")));
         applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("az_id", "az_id_1", "String", Arrays.asList("=", "IN")));
         applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("host_id", "host_id_1", "String", Arrays.asList("=", "IN")));
@@ -97,14 +98,37 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("service_id", "service_id_1", "String", Arrays.asList("=", "IN")));
         applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("l3_epc_id", "l3_epc_id_1", "String", Arrays.asList("=", "IN")));
         applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("subnet_id", "subnet_id_1", "String", Arrays.asList("=", "IN")));
-        applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("l3_device_id", "l3_device_id_1", "String", Arrays.asList("=", "IN")));
-        applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("l3_device_type", "l3_device_type_1", "String", Arrays.asList("=", "IN")));
+//        applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("l3_device_id", "l3_device_id_1", "String", Arrays.asList("=", "IN")));
+//        applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("l3_device_type", "l3_device_type_1", "String", Arrays.asList("=", "IN")));
         applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("ip4", "ip4_1", "String", Arrays.asList("=", "IN")));
         applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("ip6", "ip6_1", "String", Arrays.asList("=", "IN")));
-        applicationMapFields.add(new FilterFieldsDTO.FilterFieldConfig("server_port", "server_port", "String", Arrays.asList("=", "IN")));
         TABLE_FILTER_FIELDS_MAP.put("flow_metrics.application_map.1m", applicationMapFields);
         TABLE_FILTER_FIELDS_MAP.put("flow_metrics.application_map.1s", applicationMapFields);
         TABLE_FILTER_FIELDS_MAP.put("flow_metrics.application_map.1h", applicationMapFields);
+
+
+        // flow_log.graph_l7_flow_log
+        List<FilterFieldsDTO.FilterFieldConfig> graphL7FlowLogFields = new ArrayList<>();
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("app_service", "app_service", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("app_instance", "app_instance", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("server_port", "server_port", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("region_id", "region_id_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("az_id", "az_id_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("host_id", "host_id_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("pod_cluster_id", "pod_cluster_id_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("pod_ns_id", "pod_ns_id_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("pod_group_id", "pod_group_id_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("pod_id", "pod_id_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("pod_node_id", "pod_node_id_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("service_id", "service_id_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("l3_epc_id", "l3_epc_id_1", "String", Arrays.asList("=", "IN")));
+//        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("epc_id", "epc_id_1","String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("subnet_id", "subnet_id_1", "String", Arrays.asList("=", "IN")));
+//        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("l3_device_id", "l3_device_id_1", "String", Arrays.asList("=", "IN")));
+//        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("l3_device_type", "l3_device_type_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("ip4", "ip4_1", "String", Arrays.asList("=", "IN")));
+        graphL7FlowLogFields.add(new FilterFieldsDTO.FilterFieldConfig("ip6", "ip6_1", "String", Arrays.asList("=", "IN")));
+        TABLE_FILTER_FIELDS_MAP.put("flow_log.graph_l7_flow_log", graphL7FlowLogFields);
     }
 
     @Override

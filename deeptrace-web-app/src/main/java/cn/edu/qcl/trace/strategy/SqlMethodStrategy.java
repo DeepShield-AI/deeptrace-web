@@ -50,7 +50,7 @@ public class SqlMethodStrategy implements FieldOptionsQueryStrategy {
         log.info("SQL query returned {} records", queryData.size());
 
         // Extract field values from query results (groupUniqArray returns array in first row)
-        List<Object> fieldValues = extractFieldValues(queryData);
+        List<Object> fieldValues = extractGroupByFieldValues(queryData);
 
         // Extract enum mappings based on field name
         List<FieldOptionsDTO.FieldMapping> fieldMappings = getEnumMappingsFromField(queryParam.getField());
@@ -68,7 +68,7 @@ public class SqlMethodStrategy implements FieldOptionsQueryStrategy {
      * @param queryData the query results from ClickHouse
      * @return List of field values as strings
      */
-    private List<Object> extractFieldValues(List<Map<String, Object>> queryData) {
+    private List<Object> extractGroupByFieldValues(List<Map<String, Object>> queryData) {
         List<Object> fieldValues = new ArrayList<>();
 
         if (queryData == null || queryData.isEmpty()) {
@@ -129,6 +129,9 @@ public class SqlMethodStrategy implements FieldOptionsQueryStrategy {
                 mapping.setName(status.getDescription());
                 mappings.add(mapping);
             }
+        }else {
+            List<Map<String, Object>>  idNameMappings = idNameMappingGateway.getEnumMapping(fieldName);
+            return MapToEntity.mapListToEntityList(idNameMappings, FieldOptionsDTO.FieldMapping.class);
         }
         
         return mappings;
