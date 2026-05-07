@@ -1,6 +1,9 @@
 package cn.edu.qcl.mapper.clickhouse;
 
+import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.data.SpanDTO;
+import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
 import cn.edu.qcl.usermap.UserMapEntity;
@@ -53,5 +56,29 @@ public interface ClickHouseMapper {
      * @return 服务节点指标数据列表
      */
     List<TableNodeMetricsDTO> queryTableNodeMetrics(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询拓扑图边及其指标
+     *
+     * @param queryParam 查询参数对象
+     * @return 拓扑图边指标数据列表
+     */
+    List<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询单个节点的span明细
+     *
+     * @param queryParam 查询参数对象
+     * @return span明细数据列表
+     */
+    List<SpanDTO> querySpanDetails(SpanDetailsPageQuery queryParam);
+
+    /**
+     * 统计单个节点的span明细总数（用于分页）
+     *
+     * @param queryParam 查询参数对象
+     * @return span明细总数
+     */
+    int countSpanDetails(SpanDetailsPageQuery queryParam);
 
 }

@@ -2,10 +2,14 @@ package cn.edu.qcl.api;
 
 import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
+import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.data.SpanDTO;
+import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
+import com.alibaba.cola.dto.PageResponse;
 
 import java.util.List;
 
@@ -52,4 +56,26 @@ public interface TraceQueryServiceI {
      * @return 服务节点指标列表
      */
     List<TableNodeMetricsDTO> queryTableNodeMetrics(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询拓扑图边及其指标
+     * <p>
+     * 根据查询参数查询拓扑图中每条边的指标数据，包括请求数、错误数、错误率、平均时延等。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 拓扑图边指标列表
+     */
+    List<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询单个节点的span明细（分页）
+     * <p>
+     * 根据查询参数查询指定节点的span详细信息。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId及分页信息
+     * @return span明细分页结果
+     */
+    PageResponse<SpanDTO> querySpanDetails(SpanDetailsPageQuery queryParam);
 }

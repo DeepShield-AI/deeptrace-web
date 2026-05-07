@@ -39,6 +39,11 @@ public class SpanDTO {
     private String appService;
 
     /**
+     * L7 协议
+     */
+    private Integer l7Protocol;
+
+    /**
      * 应用实例名
      */
     private String appInstance;
@@ -91,22 +96,22 @@ public class SpanDTO {
     /**
      * IPv4 地址第一部分
      */
-    private Long ip4_0;
+    private String ip40;
 
     /**
      * IPv4 地址第二部分
      */
-    private Long ip4_1;
+    private String ip41;
 
     /**
      * IPv6 地址第一部分
      */
-    private String ip6_0;
+    private String ip60;
 
     /**
      * IPv6 地址第二部分
      */
-    private String ip6_1;
+    private String ip61;
 
     /**
      * 客户端端口
@@ -119,14 +124,19 @@ public class SpanDTO {
     private Integer serverPort;
 
     /**
+     * 是否 TLS
+     */
+    private Integer isTls;
+
+    /**
      * 进程ID第一部分
      */
-    private Long processId_0;
+    private Long processId0;
 
     /**
      * 进程ID第二部分
      */
-    private Long processId_1;
+    private Long processId1;
 
     /**
      * 属性名称列表

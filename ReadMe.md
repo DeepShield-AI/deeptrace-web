@@ -153,7 +153,7 @@
 - 如果是单个概念返回使用Cola框架的SingleResponse,
 - 如果是多个概念返回使用Cola框架的MultiResponse.
   - 如果概念是某个明确的对象，例如MultiResponse<XXXDTO>
-- 如果是分页查询的结果，使用Cola框架的PageResponse
+- 如果是分页查询的结果，使用Cola框架的 PageResponse
 
 ## 4.3 错误码规范
 一个错误码编码只能用一次。不允许重复编码！不允许重复编码！不允许重复编码！

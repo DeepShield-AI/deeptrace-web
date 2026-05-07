@@ -3,11 +3,15 @@ package cn.edu.qcl.web;
 import cn.edu.qcl.api.TraceQueryServiceI;
 import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
+import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.data.SpanDTO;
+import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
 import com.alibaba.cola.dto.MultiResponse;
+import com.alibaba.cola.dto.PageResponse;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -121,5 +125,41 @@ public class TraceQueryController {
 
         List<TableNodeMetricsDTO> res = traceQueryServiceI.queryTableNodeMetrics(queryParam);
         return MultiResponse.of(res);
+    }
+
+    /**
+     * 查询拓扑图边及其指标
+     * <p>
+     * 根据查询参数查询拓扑图中每条边的指标数据，包括请求数、错误数、错误率、平均时延等。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 拓扑图边指标列表
+     */
+    @PostMapping("/query/graph/edge/metrics")
+    public MultiResponse<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(@RequestBody GraphMetricsQueryParam queryParam) {
+        log.info("Received graph edge metrics query request: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        List<GraphEdgeMetricsDTO> res = traceQueryServiceI.queryGraphEdgeMetrics(queryParam);
+        return MultiResponse.of(res);
+    }
+
+    /**
+     * 查询单个节点的span明细（分页）
+     * <p>
+     * 根据查询参数查询指定节点的span详细信息。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId及分页信息
+     * @return span明细分页结果
+     */
+    @PostMapping("/query/span/details")
+    public PageResponse<SpanDTO> querySpanDetails(@RequestBody SpanDetailsPageQuery queryParam) {
+        log.info("Received span details query request: database={}, tableName={}, filter={}, teamId={}, pageIndex={}, pageSize={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId(),
+                queryParam.getPageIndex(), queryParam.getPageSize());
+
+        return traceQueryServiceI.querySpanDetails(queryParam);
     }
 }

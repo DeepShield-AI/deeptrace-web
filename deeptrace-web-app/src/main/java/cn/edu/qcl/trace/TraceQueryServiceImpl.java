@@ -3,13 +3,17 @@ package cn.edu.qcl.trace;
 import cn.edu.qcl.api.TraceQueryServiceI;
 import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
+import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.data.SpanDTO;
+import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
 import cn.edu.qcl.mapper.clickhouse.ClickHouseMapper;
 import cn.edu.qcl.trace.strategy.FieldOptionsQueryStrategy;
 import cn.edu.qcl.trace.strategy.FieldOptionsQueryStrategyFactory;
+import com.alibaba.cola.dto.PageResponse;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -290,6 +294,77 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         log.info("Service node metrics query returned {} records", nodes.size());
 
         return nodes;
+    }
+
+    /**
+     * 查询拓扑图边及其指标
+     * <p>
+     * 根据查询参数查询拓扑图中每条边的指标数据，包括请求数、错误数、错误率、平均时延等。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 拓扑图边指标列表
+     */
+    @Override
+    public List<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(GraphMetricsQueryParam queryParam) {
+        // 验证输入参数
+        validateGraphNodeMetricsParam(queryParam);
+
+        log.info("Querying graph edge metrics with params: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        // 执行SQL查询
+        List<GraphEdgeMetricsDTO> edges = clickHouseMapper.queryGraphEdgeMetrics(queryParam);
+        log.info("Graph edge metrics query returned {} records", edges.size());
+
+        return edges;
+    }
+
+    /**
+     * 查询单个节点的span明细（分页）
+     * <p>
+     * 根据查询参数查询指定节点的span详细信息。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId及分页信息
+     * @return span明细分页结果
+     */
+    @Override
+    public PageResponse<SpanDTO> querySpanDetails(SpanDetailsPageQuery queryParam) {
+        // 验证输入参数
+        validateSpanDetailsParam(queryParam);
+
+        log.info("Querying span details with params: database={}, tableName={}, filter={}, teamId={}, pageIndex={}, pageSize={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId(),
+                queryParam.getPageIndex(), queryParam.getPageSize());
+
+        // 执行SQL查询
+        List<SpanDTO> spans = clickHouseMapper.querySpanDetails(queryParam);
+        log.info("Span details query returned {} records", spans.size());
+
+        // 查询总数用于分页响应
+        int totalCount = clickHouseMapper.countSpanDetails(queryParam);
+        log.info("Span details total count: {}", totalCount);
+
+        return PageResponse.of(spans, totalCount, queryParam.getPageIndex(), queryParam.getPageSize());
+    }
+
+    /**
+     * Validate span details query parameters
+     */
+    private void validateSpanDetailsParam(SpanDetailsPageQuery queryParam) {
+        if (queryParam == null) {
+            throw new IllegalArgumentException("Query parameters cannot be null");
+        }
+        if (!StringUtils.hasText(queryParam.getDatabase())) {
+            throw new IllegalArgumentException("Database name is required");
+        }
+        if (!StringUtils.hasText(queryParam.getTableName())) {
+            throw new IllegalArgumentException("Table name is required");
+        }
+        // Validate database and table name to prevent SQL injection
+        validateIdentifier(queryParam.getDatabase(), "Database");
+        validateIdentifier(queryParam.getTableName(), "Table");
     }
 
     /**
