@@ -39,5 +39,5 @@ public class MetricDTO {
     /**
      * Average RTT in milliseconds (3 decimal places)
      */
-    private Double avgRttMs;
+//    private Double avgRttMs;
 }

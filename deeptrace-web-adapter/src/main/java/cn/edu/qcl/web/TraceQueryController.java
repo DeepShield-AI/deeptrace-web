@@ -4,6 +4,7 @@ import cn.edu.qcl.api.TraceQueryServiceI;
 import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
 import com.alibaba.cola.dto.MultiResponse;
@@ -101,6 +102,24 @@ public class TraceQueryController {
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
         List<GraphNodeMetricsDTO> res = traceQueryServiceI.queryGraphNodeMetrics(queryParam);
+        return MultiResponse.of(res);
+    }
+
+    /**
+     * 查询服务节点列表及其指标
+     * <p>
+     * 根据查询参数查询服务节点的详细信息，包括各资源名称、IP地址、端口及请求指标。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 服务节点指标列表
+     */
+    @PostMapping("/query/table/node/metrics")
+    public MultiResponse<TableNodeMetricsDTO> queryTableNodeMetrics(@RequestBody GraphMetricsQueryParam queryParam) {
+        log.info("Received service node metrics query request: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        List<TableNodeMetricsDTO> res = traceQueryServiceI.queryTableNodeMetrics(queryParam);
         return MultiResponse.of(res);
     }
 }

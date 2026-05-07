@@ -3,6 +3,7 @@ package cn.edu.qcl.api;
 import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
 
@@ -40,4 +41,15 @@ public interface TraceQueryServiceI {
      * @return GraphNodeMetricsDTO containing node metrics
      */
     List<GraphNodeMetricsDTO> queryGraphNodeMetrics(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询服务节点列表及其指标
+     * <p>
+     * 根据查询参数查询服务节点的详细信息，包括各资源名称、IP地址、端口及请求指标。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 服务节点指标列表
+     */
+    List<TableNodeMetricsDTO> queryTableNodeMetrics(GraphMetricsQueryParam queryParam);
 }

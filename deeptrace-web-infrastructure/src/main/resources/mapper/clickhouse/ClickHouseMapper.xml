@@ -55,4 +55,101 @@
         GROUP BY app_service, service_id
     </select>
 
+    <!-- 查询服务节点列表及其指标 -->
+    <!--
+        根据传入的SQL语句查询服务节点的详细信息，包括各资源名称、IP地址、端口及请求指标。
+
+        参数说明：
+        - database: 数据库名称（如 "flow_metrics"）
+        - tableName: 表名称（如 "application.1m"）
+        - teamId: 团队ID，用于多租户数据隔离
+        - sql: 自定义的SQL查询语句
+
+        返回字段：
+        - appService: 应用服务名
+        - azName: 可用区名称
+        - autoServiceName: 自动服务名称
+        - hostName: 宿主机名称
+        - podClusterName: Pod集群名称
+        - podNsName: Pod命名空间名称
+        - podGroupName: Pod组名称
+        - podName: Pod名称
+        - podNodeName: Pod节点名称
+        - serviceName: 服务名称
+        - l3EpcName: L3 EPC名称
+        - subnetName: 子网名称
+        - l3DeviceName: L3设备名称
+        - autoInstanceName: 自动实例名称
+        - isIpv4: 是否IPv4
+        - ip4: IPv4地址
+        - ip6: IPv6地址
+        - serverPort: 服务器端口
+        - totalRequests: 总请求数
+        - totalErrors: 总错误数
+        - errorRate: 错误率
+        - avgRttMicroseconds: 平均RTT微秒值
+    -->
+    <select id="queryTableNodeMetrics" resultType="cn.edu.qcl.dto.data.TableNodeMetricsDTO">
+        WITH grouped AS (
+            SELECT
+                app_service,
+                any(app_instance) AS app_instance,
+                any(az_id) AS az_id,
+                any(host_id) AS host_id,
+                any(pod_cluster_id) AS pod_cluster_id,
+                any(pod_ns_id) AS pod_ns_id,
+                any(pod_group_id) AS pod_group_id,
+                any(pod_id) AS pod_id,
+                any(pod_node_id) AS pod_node_id,
+                any(service_id) AS service_id,
+                any(l3_epc_id) AS l3_epc_id,
+                any(subnet_id) AS subnet_id,
+                any(l3_device_id) AS l3_device_id,
+                any(l3_device_type) AS l3_device_type,
+                any(auto_instance_id) AS auto_instance_id,
+                any(auto_instance_type) AS auto_instance_type,
+                any(auto_service_id) AS auto_service_id,
+                any(auto_service_type) AS auto_service_type,
+                any(is_ipv4) AS is_ipv4,
+                any(ip4) AS ip4,
+                any(ip6) AS ip6,
+                any(server_port) AS server_port,
+                sum(request) AS total_requests,
+                sum(server_error) AS total_errors,
+                sum(response) AS total_responses,
+                if(total_responses = 0, 0, round(total_errors / total_responses, 4)) AS error_rate,
+                if(sum(rrt_count) = 0, 0, sum(rrt_sum) / sum(rrt_count)) AS avg_rtt_microseconds
+            FROM `${database}`.`${tableName}`
+            PREWHERE team_id = #{teamId}
+            <if test="filter != null and filter != ''">
+                AND ${filter}
+            </if>
+            GROUP BY app_service
+        )
+        SELECT
+            app_service AS appService,
+            dictGetOrDefault('flow_tag.az_map', 'name', toUInt64(az_id), toString(az_id)) AS azName,
+            dictGetOrDefault('flow_tag.device_map', 'name', (toUInt64(auto_service_type), toUInt64(auto_service_id)), toString(auto_service_id)) AS autoServiceName,
+            dictGetOrDefault('flow_tag.chost_map', 'name', toUInt64(host_id), toString(host_id)) AS hostName,
+            dictGetOrDefault('flow_tag.pod_cluster_map', 'name', toUInt64(pod_cluster_id), toString(pod_cluster_id)) AS podClusterName,
+            dictGetOrDefault('flow_tag.pod_ns_map', 'name', toUInt64(pod_ns_id), toString(pod_ns_id)) AS podNsName,
+            dictGetOrDefault('flow_tag.pod_group_map', 'name', toUInt64(pod_group_id), toString(pod_group_id)) AS podGroupName,
+            dictGetOrDefault('flow_tag.pod_map', 'name', toUInt64(pod_id), toString(pod_id)) AS podName,
+            dictGetOrDefault('flow_tag.pod_node_map', 'name', toUInt64(pod_node_id), toString(pod_node_id)) AS podNodeName,
+            dictGetOrDefault('flow_tag.pod_service_map', 'name', toUInt64(service_id), toString(service_id)) AS serviceName,
+            dictGetOrDefault('flow_tag.l3_epc_map', 'name', toUInt64(l3_epc_id), toString(l3_epc_id)) AS l3EpcName,
+            dictGetOrDefault('flow_tag.subnet_map', 'name', toUInt64(subnet_id), toString(subnet_id)) AS subnetName,
+            dictGetOrDefault('flow_tag.device_map', 'name', (toUInt64(l3_device_type), toUInt64(l3_device_id)), toString(l3_device_id)) AS l3DeviceName,
+            dictGetOrDefault('flow_tag.device_map', 'name', (toUInt64(auto_instance_type), toUInt64(auto_instance_id)), toString(auto_instance_id)) AS autoInstanceName,
+            is_ipv4 AS isIpv4,
+            IPv4NumToString(ip4) AS ip4,
+            IPv6NumToString(ip6) AS ip6,
+            server_port AS serverPort,
+            total_requests AS totalRequests,
+            total_errors AS totalErrors,
+            error_rate AS errorRate,
+            avg_rtt_microseconds AS avgRttMicroseconds
+        FROM grouped
+    </select>
+
 </mapper>

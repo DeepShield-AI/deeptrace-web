@@ -4,6 +4,7 @@ import cn.edu.qcl.api.TraceQueryServiceI;
 import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
 import cn.edu.qcl.mapper.clickhouse.ClickHouseMapper;
@@ -261,10 +262,34 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
        /* if (queryParam.getFilter() == null) {
             throw new IllegalArgumentException("Filter is required");
         }*/
-        
+
         // Validate database and table name to prevent SQL injection
         validateIdentifier(queryParam.getDatabase(), "Database");
         validateIdentifier(queryParam.getTableName(), "Table");
+    }
+
+    /**
+     * 查询服务节点列表及其指标
+     * <p>
+     * 根据查询参数查询服务节点的详细信息，包括各资源名称、IP地址、端口及请求指标。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 服务节点指标列表
+     */
+    @Override
+    public List<TableNodeMetricsDTO> queryTableNodeMetrics(GraphMetricsQueryParam queryParam) {
+        // 验证输入参数
+        validateGraphNodeMetricsParam(queryParam);
+
+        log.info("Querying service node metrics with params: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        // 执行SQL查询
+        List<TableNodeMetricsDTO> nodes = clickHouseMapper.queryTableNodeMetrics(queryParam);
+        log.info("Service node metrics query returned {} records", nodes.size());
+
+        return nodes;
     }
 
     /**
