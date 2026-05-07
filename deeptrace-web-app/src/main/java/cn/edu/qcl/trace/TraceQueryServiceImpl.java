@@ -3,7 +3,10 @@ package cn.edu.qcl.trace;
 import cn.edu.qcl.api.TraceQueryServiceI;
 import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
+import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
+import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
+import cn.edu.qcl.mapper.clickhouse.ClickHouseMapper;
 import cn.edu.qcl.trace.strategy.FieldOptionsQueryStrategy;
 import cn.edu.qcl.trace.strategy.FieldOptionsQueryStrategyFactory;
 import jakarta.annotation.Resource;
@@ -30,6 +33,9 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
 
     @Resource
     private FieldOptionsQueryStrategyFactory strategyFactory;
+
+    @Resource
+    private ClickHouseMapper clickHouseMapper;
 
     /**
      * Fixed filter fields configuration for different tables
@@ -208,4 +214,98 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
                 .filterFields(filterFields)
                 .build();
     }
+
+    /**
+     * 查询图节点指标数据
+     * <p>
+     * 根据查询参数从ClickHouse数据库中检索图节点的指标信息，包括请求数、错误数、错误率、
+     * 平均响应时间等，并将结果转换为DTO对象返回。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含以下字段：
+     *                   database - 数据库名称（如 "flow_metrics"）；
+     *                   tableName - 表名称（如 "application.1m"）；
+     *                   filter - 过滤条件SQL（如 "time >= toDateTime(?, 'Asia/Shanghai') and app_service=redis"）；
+     *                   teamId - 团队ID，用于多租户数据隔离。
+     * @return 图节点指标数据传输对象，包含节点列表及各节点的详细指标信息（应用服务名、服务ID、
+     *         总请求数、总错误数、总响应数、错误率、平均RTT微秒值、平均RTT毫秒值）
+     */
+    @Override
+    public List<GraphNodeMetricsDTO> queryGraphNodeMetrics(GraphMetricsQueryParam queryParam) {
+        // 验证输入参数
+        validateGraphNodeMetricsParam(queryParam);
+
+        log.info("Querying graph node metrics with params: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        // 执行SQL查询（SQL定义在ClickHouseMapper.xml中，直接返回NodeMetric对象列表）
+        List<GraphNodeMetricsDTO> nodes = clickHouseMapper.queryGraphNodeMetrics(queryParam);
+        log.info("Graph node metrics query returned {} records", nodes.size());
+
+        return nodes;
+    }
+
+    /**
+     * Validate graph node metrics query parameters
+     */
+    private void validateGraphNodeMetricsParam(GraphMetricsQueryParam queryParam) {
+        if (queryParam == null) {
+            throw new IllegalArgumentException("Query parameters cannot be null");
+        }
+        if (!StringUtils.hasText(queryParam.getDatabase())) {
+            throw new IllegalArgumentException("Database name is required");
+        }
+        if (!StringUtils.hasText(queryParam.getTableName())) {
+            throw new IllegalArgumentException("Table name is required");
+        }
+       /* if (queryParam.getFilter() == null) {
+            throw new IllegalArgumentException("Filter is required");
+        }*/
+        
+        // Validate database and table name to prevent SQL injection
+        validateIdentifier(queryParam.getDatabase(), "Database");
+        validateIdentifier(queryParam.getTableName(), "Table");
+    }
+
+    /**
+     * Validate identifier (database name or table name) to prevent SQL injection.
+     * Only allows alphanumeric characters, underscores, dots, and hyphens.
+     *
+     * @param identifier the identifier to validate
+     * @param fieldName the field name for error message
+     * @throws IllegalArgumentException if the identifier contains invalid characters
+     */
+    private void validateIdentifier(String identifier, String fieldName) {
+        // Allow only alphanumeric characters, underscores, dots, and hyphens
+        // Pattern: starts with letter or underscore, followed by allowed characters
+        String validPattern = "^[a-zA-Z0-9_][a-zA-Z0-9_.-]*$";
+        
+        // For table names that may contain dots (e.g., "application.1m"), validate each part
+        if (identifier.contains(".")) {
+            String[] parts = identifier.split("\\.");
+            for (String part : parts) {
+                if (!part.matches(validPattern)) {
+                    throw new IllegalArgumentException(
+                            fieldName + " name contains invalid characters: " + identifier);
+                }
+            }
+        } else {
+            if (!identifier.matches(validPattern)) {
+                throw new IllegalArgumentException(
+                        fieldName + " name contains invalid characters: " + identifier);
+            }
+        }
+        
+        // Additional check for suspicious patterns
+        String lowerIdentifier = identifier.toLowerCase();
+        if (lowerIdentifier.contains("--") || lowerIdentifier.contains("/*")
+                || lowerIdentifier.contains("*/") || lowerIdentifier.contains(";")
+                || lowerIdentifier.contains("'") || lowerIdentifier.contains("\"")
+                || lowerIdentifier.contains("=") || lowerIdentifier.contains(" ")
+                || lowerIdentifier.contains("\t") || lowerIdentifier.contains("\n")) {
+            throw new IllegalArgumentException(
+                    fieldName + " name contains forbidden characters: " + identifier);
+        }
+    }
+
 }

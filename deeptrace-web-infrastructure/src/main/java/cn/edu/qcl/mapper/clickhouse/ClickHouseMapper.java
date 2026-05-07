@@ -1,5 +1,7 @@
 package cn.edu.qcl.mapper.clickhouse;
 
+import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
 import cn.edu.qcl.usermap.UserMapEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -32,5 +34,15 @@ public interface ClickHouseMapper {
      */
 //    @Select("SELECT `_id` as id, eth_type as name FROM flow_log.l4_flow_log limit 5")
     List<UserMapEntity> listAllUserMaps();
+
+    // ==================== graph node metrics 查询 ====================
+
+    /**
+     * 查询图节点指标数据
+     *
+     * @param queryParam 查询参数对象
+     * @return 图节点指标数据列表
+     */
+    List<GraphNodeMetricsDTO> queryGraphNodeMetrics(GraphMetricsQueryParam queryParam);
 
 }

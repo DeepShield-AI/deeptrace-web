@@ -16,5 +16,43 @@
                  LIMIT 5
     </select>
 
+    <!-- 查询图节点指标数据 -->
+    <!--
+        根据查询参数从ClickHouse数据库中检索图节点的指标信息，包括请求数、错误数、错误率、
+        平均响应时间等。
+        
+        参数说明：
+        - database: 数据库名称（如 "flow_metrics"）
+        - tableName: 表名称（如 "application.1m"）
+        - filter: 过滤条件SQL（如 "time >= toDateTime(?, 'Asia/Shanghai') and app_service=redis"）
+        - teamId: 团队ID，用于多租户数据隔离
+        
+        返回字段（使用驼峰别名映射到Java对象属性）：
+        - appService: 应用服务名
+        - serviceId: 服务ID
+        - totalRequests: 总请求数
+        - totalErrors: 总错误数
+        - totalResponses: 总响应数
+        - errorRate: 错误率
+        - avgRttMicroseconds: 平均RTT微秒值
+        - avgRttMs: 平均RTT毫秒值
+    -->
+    <select id="queryGraphNodeMetrics" resultType="cn.edu.qcl.dto.data.GraphNodeMetricsDTO">
+        SELECT
+            app_service AS appService,
+            service_id AS serviceId,
+            sum(request) AS totalRequests,
+            sum(server_error) AS totalErrors,
+            sum(response) AS totalResponses,
+            if(totalResponses = 0, 0, round(totalErrors / totalResponses, 4)) AS errorRate,
+            if(sum(rrt_count) = 0, 0, sum(rrt_sum) / sum(rrt_count)) AS avgRttMicroseconds,
+            round(avgRttMicroseconds / 1000.0, 3) AS avgRttMs
+        FROM `${database}`.`${tableName}`
+        PREWHERE team_id = #{teamId}
+        <if test="filter != null and filter != ''">
+            WHERE ${filter}
+        </if>
+        GROUP BY app_service, service_id
+    </select>
 
 </mapper>

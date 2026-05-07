@@ -3,13 +3,20 @@ package cn.edu.qcl.web;
 import cn.edu.qcl.api.TraceQueryServiceI;
 import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
+import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
+import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
+import com.alibaba.cola.dto.MultiResponse;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Metric Query Controller
@@ -72,5 +79,28 @@ public class TraceQueryController {
         log.info("Received get table filter fields request: database={}, tableName={}", database, tableName);
 
         return traceQueryServiceI.getTableFilterFields(database, tableName);
+    }
+
+    /**
+     * 查询图节点及其指标
+     * <p>
+     * 返回图中每个节点（服务）的指标数据，包括请求数、错误数、错误率、平均响应时间等。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含以下字段：
+     *                   database - 数据库名称（如 "flow_metrics"）；
+     *                   tableName - 表名称（如 "application.1m"）；
+     *                   filter - 过滤条件SQL（如 "time >= toDateTime(?, 'Asia/Shanghai') and time < toDateTime(?, 'Asia/Shanghai') and app_service=redis and az_id in (11,22)"）；
+     *                   teamId - 团队ID，用于多租户数据隔离。
+     * @return 图节点指标数据传输对象，包含节点列表及各节点的详细指标信息（应用服务名、服务ID、总请求数、总错误数、
+     *         总响应数、错误率、平均RTT微秒值、平均RTT毫秒值）
+     */
+    @PostMapping("/query/graph/node/metrics")
+    public MultiResponse<GraphNodeMetricsDTO> queryGraphNodeMetrics(@RequestBody GraphMetricsQueryParam queryParam) {
+        log.info("Received graph node metrics query request: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        List<GraphNodeMetricsDTO> res = traceQueryServiceI.queryGraphNodeMetrics(queryParam);
+        return MultiResponse.of(res);
     }
 }
