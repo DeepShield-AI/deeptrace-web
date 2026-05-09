@@ -11,8 +11,15 @@ public class UserSessionUtils {
      */
     public static Long getCurrentUserId() {
         // 从SecurityContext获取用户信息
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new RuntimeException("用户未登录");
+        }
+        Object principal = authentication.getPrincipal();
+        if (principal == null) {
+            throw new RuntimeException("用户未登录");
+        }
+        if (principal instanceof UserDTO ) {
             return ((UserDTO) principal).getUserId();
         }
         // 如果principal是用户名字符串，需要查询用户ID
@@ -27,6 +34,8 @@ public class UserSessionUtils {
     public static Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
+
+
     
     public static void setUser(UserDTO user) {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
