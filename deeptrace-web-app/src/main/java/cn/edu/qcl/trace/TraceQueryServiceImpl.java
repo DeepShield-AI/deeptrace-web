@@ -9,6 +9,8 @@ import cn.edu.qcl.dto.data.NodeTimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
+import cn.edu.qcl.dto.data.TraceInfoDTO;
+import cn.edu.qcl.dto.data.TraceListPageQuery;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
 import cn.edu.qcl.mapper.clickhouse.ClickHouseMapper;
@@ -391,6 +393,30 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         log.info("Node latency time series query returned {} records", timeSeries.size());
 
         return timeSeries;
+    }
+
+    /**
+     * 查询Trace维度列表（分页）
+     * <p>
+     * 根据查询参数查询Trace维度列表信息。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含filter、teamId及分页信息
+     * @return Trace维度列表分页结果
+     */
+    @Override
+    public PageResponse<TraceInfoDTO> queryTraceList(TraceListPageQuery queryParam) {
+        log.info("Querying trace list with params: filter={}, teamId={}, pageIndex={}, pageSize={}",
+                queryParam.getFilter(), queryParam.getTeamId(),
+                queryParam.getPageIndex(), queryParam.getPageSize());
+
+        List<TraceInfoDTO> traces = clickHouseMapper.queryTraceList(queryParam);
+        log.info("Trace list query returned {} records", traces.size());
+
+        int totalCount = clickHouseMapper.countTraceList(queryParam);
+        log.info("Trace list total count: {}", totalCount);
+
+        return PageResponse.of(traces, totalCount, queryParam.getPageIndex(), queryParam.getPageSize());
     }
 
     /**

@@ -66,7 +66,10 @@
     <!--如果没有设置 additivity="false" ,就会导致一条日志在控制台输出两次的情况-->
     <!--additivity表示要不要使用rootLogger配置的appender进行输出-->
     <!--即数据库日志仅在控制台打印，方便开发时查看SQL执行情况，而不需要在生产环境的日志文件中保存大量详细的数据库操作日志-->
-    <logger name="com.apache.ibatis" level="TRACE" additivity="false">
+    <logger name="org.apache.ibatis" level="TRACE" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
+    <!--<logger name="com.zaxxer.hikari" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>-->
 </configuration>

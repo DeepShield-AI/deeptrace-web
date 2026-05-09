@@ -6,6 +6,8 @@ import cn.edu.qcl.dto.data.NodeTimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
+import cn.edu.qcl.dto.data.TraceInfoDTO;
+import cn.edu.qcl.dto.data.TraceListPageQuery;
 import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
 import cn.edu.qcl.usermap.UserMapEntity;
 import org.apache.ibatis.annotations.Mapper;
@@ -105,5 +107,21 @@ public interface ClickHouseMapper {
      * @return 时间序列响应时延列表
      */
     List<NodeTimeSeriesDTO> queryNodeLatencyTimeSeries(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询Trace维度列表（分页）
+     *
+     * @param queryParam 查询参数对象
+     * @return Trace维度信息列表
+     */
+    List<TraceInfoDTO> queryTraceList(TraceListPageQuery queryParam);
+
+    /**
+     * 统计Trace维度列表总数（用于分页）
+     *
+     * @param queryParam 查询参数对象
+     * @return Trace维度列表总数
+     */
+    int countTraceList(TraceListPageQuery queryParam);
 
 }

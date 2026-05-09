@@ -9,6 +9,8 @@ import cn.edu.qcl.dto.data.NodeTimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
+import cn.edu.qcl.dto.data.TraceInfoDTO;
+import cn.edu.qcl.dto.data.TraceListPageQuery;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
 import com.alibaba.cola.dto.MultiResponse;
@@ -163,6 +165,24 @@ public class TraceQueryController {
                 queryParam.getPageIndex(), queryParam.getPageSize());
 
         return traceQueryServiceI.querySpanDetails(queryParam);
+    }
+
+    /**
+     * 查询Trace维度列表（分页）
+     * <p>
+     * 根据查询参数查询Trace维度列表信息。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含filter、teamId及分页信息
+     * @return Trace维度列表分页结果
+     */
+    @PostMapping("/query/trace/list")
+    public PageResponse<TraceInfoDTO> queryTraceList(@RequestBody TraceListPageQuery queryParam) {
+        log.info("Received trace list query request: filter={}, teamId={}, pageIndex={}, pageSize={}",
+                queryParam.getFilter(), queryParam.getTeamId(),
+                queryParam.getPageIndex(), queryParam.getPageSize());
+
+        return traceQueryServiceI.queryTraceList(queryParam);
     }
 
     /**

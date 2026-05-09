@@ -364,4 +364,84 @@
         ORDER BY minute ASC
     </select>
 
+    <!-- 查询Trace维度列表 -->
+    <!--
+        根据查询参数查询Trace维度列表信息。
+
+        参数说明：
+        - teamId: 团队ID，用于多租户数据隔离
+        - filter: 过滤条件SQL
+        - pageIndex: 页码
+        - pageSize: 每页大小
+
+        返回字段（使用驼峰别名映射到Java对象属性）：
+        - teamId: 团队ID
+        - traceId: Trace ID
+        - startTime: 开始时间
+        - endTime: 结束时间
+        - durationUs: 耗时（微秒）
+        - rootAppService: 根应用服务名
+        - rootRequestDomain: 根请求域名
+        - rootRequestResource: 根请求资源
+        - rootEndpoint: 根端点
+        - rootResponseStatus: 根响应状态
+        - rootL7Protocol: 根L7协议
+        - rootBizType: 根业务类型
+        - spanCount: Span数量
+        - errorSpanCount: 错误Span数量
+        - hasError: 是否有错误
+        - appServices: 应用服务列表
+    -->
+    <select id="queryTraceList" resultType="cn.edu.qcl.dto.data.TraceInfoDTO">
+        SELECT
+            team_id AS teamId,
+            trace_id AS traceId,
+            start_time AS startTime,
+            end_time AS endTime,
+            duration_us AS durationUs,
+            root_app_service AS rootAppService,
+            root_request_domain AS rootRequestDomain,
+            root_request_resource AS rootRequestResource,
+            root_endpoint AS rootEndpoint,
+            root_response_status AS rootResponseStatus,
+            root_l7_protocol AS rootL7Protocol,
+            root_biz_type AS rootBizType,
+            span_count AS spanCount,
+            error_span_count AS errorSpanCount,
+            has_error AS hasError,
+            app_services AS appServices
+        FROM `${database}`.`${tableName}`
+        WHERE 1 = 1
+        <if test="teamId != null">
+            AND team_id = #{teamId}
+        </if>
+        <if test="filter != null and filter != ''">
+            AND ${filter}
+        </if>
+        LIMIT #{pageSize} OFFSET ( (#{pageIndex} - 1) * #{pageSize} )
+    </select>
+
+    <!-- 统计Trace维度列表总数（用于分页） -->
+    <!--
+        根据查询参数统计Trace维度列表总数。
+
+        参数说明：
+        - teamId: 团队ID，用于多租户数据隔离
+        - filter: 过滤条件SQL
+
+        返回字段：
+        - totalCount: 列表总数
+    -->
+    <select id="countTraceList" resultType="int">
+        SELECT count(*) AS totalCount
+        FROM `${database}`.`${tableName}`
+        WHERE 1 = 1
+        <if test="teamId != null">
+            AND team_id = #{teamId}
+        </if>
+        <if test="filter != null and filter != ''">
+            AND ${filter}
+        </if>
+    </select>
+
 </mapper>
