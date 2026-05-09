@@ -274,4 +274,94 @@
         </if>
     </select>
 
+    <!-- 查询单个节点的时间序列请求数量 -->
+    <!--
+        根据查询参数查询单个节点的时间序列请求数量，以分钟为单位聚合。
+
+        参数说明：
+        - database: 数据库名称（如 "flow_metrics"）
+        - tableName: 表名称（如 "application.1m"）
+        - filter: 过滤条件SQL（如 "time >= toDateTime(?, 'Asia/Shanghai') and time < toDateTime(?, 'Asia/Shanghai') and app_service=redis"）
+        - teamId: 团队ID，用于多租户数据隔离
+
+        返回字段（使用驼峰别名映射到Java对象属性）：
+        - minute: 时间点（分钟级别）
+        - totalRequests: 总请求数
+    -->
+    <select id="queryNodeTimeSeries" resultType="cn.edu.qcl.dto.data.NodeTimeSeriesDTO">
+        SELECT
+            toStartOfMinute(time) AS minute,
+            count() AS totalRequests
+        FROM `${database}`.`${tableName}`
+        PREWHERE team_id = #{teamId}
+        AND span_kind = 2
+        <if test="filter != null and filter != ''">
+            where ${filter}
+        </if>
+        GROUP BY minute
+        ORDER BY minute ASC
+    </select>
+
+    <!-- 查询单个节点的时间序列请求错误数 -->
+    <!--
+        根据查询参数查询单个节点的时间序列请求错误数，以分钟为单位聚合。
+
+        参数说明：
+        - database: 数据库名称（如 "flow_metrics"）
+        - tableName: 表名称（如 "application.1m"）
+        - filter: 过滤条件SQL（如 "time >= toDateTime(?, 'Asia/Shanghai') and time < toDateTime(?, 'Asia/Shanghai') and app_service=redis"）
+        - teamId: 团队ID，用于多租户数据隔离
+
+        返回字段（使用驼峰别名映射到Java对象属性）：
+        - minute: 时间点（分钟级别）
+        - errorRequests: 错误请求数
+    -->
+    <select id="queryNodeErrorTimeSeries" resultType="cn.edu.qcl.dto.data.NodeTimeSeriesDTO">
+        SELECT
+            toStartOfMinute(time) AS minute,
+            sumIf(1, response_status != 0) AS errorRequests
+        FROM `${database}`.`${tableName}`
+        PREWHERE team_id = #{teamId}
+        AND span_kind = 2
+        <if test="filter != null and filter != ''">
+            where ${filter}
+        </if>
+        GROUP BY minute
+        ORDER BY minute ASC
+    </select>
+
+    <!-- 查询单个节点的时间序列响应时延 -->
+    <!--
+        根据查询参数查询单个节点的时间序列响应时延，以分钟为单位聚合。
+
+        参数说明：
+        - database: 数据库名称（如 "flow_metrics"）
+        - tableName: 表名称（如 "application.1m"）
+        - filter: 过滤条件SQL（如 "time >= toDateTime(?, 'Asia/Shanghai') and time < toDateTime(?, 'Asia/Shanghai') and app_service=redis"）
+        - teamId: 团队ID，用于多租户数据隔离
+
+        返回字段（使用驼峰别名映射到Java对象属性）：
+        - minute: 时间点（分钟级别）
+        - avgLatencySeconds: 平均响应时延（秒）
+        - p50LatencySeconds: P50响应时延（秒）
+        - p75LatencySeconds: P75响应时延（秒）
+        - p99LatencySeconds: P99响应时延（秒）
+    -->
+    <select id="queryNodeLatencyTimeSeries" resultType="cn.edu.qcl.dto.data.NodeTimeSeriesDTO">
+        SELECT
+            toStartOfMinute(time) AS minute,
+            avg(response_duration) / 1000000 AS avgLatencySeconds,
+            quantile(0.50)(response_duration) / 1000000 AS p50LatencySeconds,
+            quantile(0.75)(response_duration) / 1000000 AS p75LatencySeconds,
+            quantile(0.99)(response_duration) / 1000000 AS p99LatencySeconds
+        FROM `${database}`.`${tableName}`
+        PREWHERE team_id = #{teamId}
+        AND span_kind = 2
+        <if test="filter != null and filter != ''">
+            where ${filter}
+        </if>
+        GROUP BY minute
+        ORDER BY minute ASC
+    </select>
+
 </mapper>

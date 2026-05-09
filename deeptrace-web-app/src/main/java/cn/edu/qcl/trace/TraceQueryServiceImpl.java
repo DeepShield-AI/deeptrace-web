@@ -5,6 +5,7 @@ import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
 import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.data.NodeTimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
@@ -318,6 +319,78 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         log.info("Graph edge metrics query returned {} records", edges.size());
 
         return edges;
+    }
+
+    /**
+     * 查询单个节点的时间序列请求数量
+     * <p>
+     * 根据查询参数查询单个节点的时间序列请求数量，以分钟为单位聚合统计。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 时间序列请求数量列表
+     */
+    @Override
+    public List<NodeTimeSeriesDTO> queryNodeTimeSeries(GraphMetricsQueryParam queryParam) {
+        // 验证输入参数
+        validateGraphNodeMetricsParam(queryParam);
+
+        log.info("Querying node time series with params: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        // 执行SQL查询
+        List<NodeTimeSeriesDTO> timeSeries = clickHouseMapper.queryNodeTimeSeries(queryParam);
+        log.info("Node time series query returned {} records", timeSeries.size());
+
+        return timeSeries;
+    }
+
+    /**
+     * 查询单个节点的时间序列请求错误数
+     * <p>
+     * 根据查询参数查询单个节点的时间序列请求错误数，以分钟为单位聚合统计。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 时间序列请求错误数列表
+     */
+    @Override
+    public List<NodeTimeSeriesDTO> queryNodeErrorTimeSeries(GraphMetricsQueryParam queryParam) {
+        // 验证输入参数
+        validateGraphNodeMetricsParam(queryParam);
+
+        log.info("Querying node error time series with params: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        // 执行SQL查询
+        List<NodeTimeSeriesDTO> timeSeries = clickHouseMapper.queryNodeErrorTimeSeries(queryParam);
+        log.info("Node error time series query returned {} records", timeSeries.size());
+
+        return timeSeries;
+    }
+
+    /**
+     * 查询单个节点的时间序列响应时延
+     * <p>
+     * 根据查询参数查询单个节点的时间序列响应时延，以分钟为单位聚合统计。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 时间序列响应时延列表
+     */
+    @Override
+    public List<NodeTimeSeriesDTO> queryNodeLatencyTimeSeries(GraphMetricsQueryParam queryParam) {
+        // 验证输入参数
+        validateGraphNodeMetricsParam(queryParam);
+
+        log.info("Querying node latency time series with params: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        // 执行SQL查询
+        List<NodeTimeSeriesDTO> timeSeries = clickHouseMapper.queryNodeLatencyTimeSeries(queryParam);
+        log.info("Node latency time series query returned {} records", timeSeries.size());
+
+        return timeSeries;
     }
 
     /**

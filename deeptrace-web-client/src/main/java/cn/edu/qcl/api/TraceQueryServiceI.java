@@ -4,6 +4,7 @@ import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
 import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.data.NodeTimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
@@ -67,6 +68,39 @@ public interface TraceQueryServiceI {
      * @return 拓扑图边指标列表
      */
     List<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询单个节点的时间序列请求数量
+     * <p>
+     * 根据查询参数查询单个节点的时间序列请求数量，以分钟为单位聚合统计。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 时间序列请求数量列表
+     */
+    List<NodeTimeSeriesDTO> queryNodeTimeSeries(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询单个节点的时间序列请求错误数
+     * <p>
+     * 根据查询参数查询单个节点的时间序列请求错误数，以分钟为单位聚合统计。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 时间序列请求错误数列表
+     */
+    List<NodeTimeSeriesDTO> queryNodeErrorTimeSeries(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询单个节点的时间序列响应时延
+     * <p>
+     * 根据查询参数查询单个节点的时间序列响应时延，以分钟为单位聚合统计。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return 时间序列响应时延列表
+     */
+    List<NodeTimeSeriesDTO> queryNodeLatencyTimeSeries(GraphMetricsQueryParam queryParam);
 
     /**
      * 查询单个节点的span明细（分页）
