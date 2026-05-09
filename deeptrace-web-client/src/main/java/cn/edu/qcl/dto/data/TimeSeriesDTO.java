@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NodeTimeSeriesDTO {
+public class TimeSeriesDTO {
     /**
      * Time point (minute level)
      */

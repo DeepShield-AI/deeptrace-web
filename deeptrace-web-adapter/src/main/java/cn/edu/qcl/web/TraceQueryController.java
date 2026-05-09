@@ -5,7 +5,7 @@ import cn.edu.qcl.dto.data.FieldOptionsDTO;
 import cn.edu.qcl.dto.data.FilterFieldsDTO;
 import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
-import cn.edu.qcl.dto.data.NodeTimeSeriesDTO;
+import cn.edu.qcl.dto.data.TimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.List;
 
 /**
@@ -178,11 +177,11 @@ public class TraceQueryController {
      * @return 时间序列请求数量列表
      */
     @PostMapping("/query/node/count_time_series")
-    public MultiResponse<NodeTimeSeriesDTO> queryNodeTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<TimeSeriesDTO> queryNodeCountTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
         log.info("Received node time series query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
-        List<NodeTimeSeriesDTO> res = traceQueryServiceI.queryNodeTimeSeries(queryParam);
+        List<TimeSeriesDTO> res = traceQueryServiceI.queryNodeCountTimeSeries(queryParam);
         return MultiResponse.of(res);
     }
 
@@ -196,11 +195,11 @@ public class TraceQueryController {
      * @return 时间序列请求错误数列表
      */
     @PostMapping("/query/node/error_time_series")
-    public MultiResponse<NodeTimeSeriesDTO> queryNodeErrorTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<TimeSeriesDTO> queryNodeErrorTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
         log.info("Received node error time series query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
-        List<NodeTimeSeriesDTO> res = traceQueryServiceI.queryNodeErrorTimeSeries(queryParam);
+        List<TimeSeriesDTO> res = traceQueryServiceI.queryNodeErrorTimeSeries(queryParam);
         return MultiResponse.of(res);
     }
 
@@ -214,13 +213,15 @@ public class TraceQueryController {
      * @return 时间序列响应时延列表
      */
     @PostMapping("/query/node/latency_time_series")
-    public MultiResponse<NodeTimeSeriesDTO> queryNodeLatencyTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<TimeSeriesDTO> queryNodeLatencyTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
         log.info("Received node latency time series query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
-        List<NodeTimeSeriesDTO> res = traceQueryServiceI.queryNodeLatencyTimeSeries(queryParam);
+        List<TimeSeriesDTO> res = traceQueryServiceI.queryNodeLatencyTimeSeries(queryParam);
         return MultiResponse.of(res);
     }
+
+
 
     /**
      * 查询Trace维度列表（分页）
@@ -239,4 +240,59 @@ public class TraceQueryController {
 
         return traceQueryServiceI.queryTraceList(queryParam);
     }
+
+    /**
+     * 查询Trace时间序列响应时延
+     * <p>
+     * 根据查询参数查询Trace维度列表的时间序列响应时延，以分钟为单位聚合统计。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return Trace时间序列响应时延列表
+     */
+    @PostMapping("/query/trace/latency_time_series")
+    public MultiResponse<TimeSeriesDTO> queryTraceLatencyTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+        log.info("Received trace latency time series query request: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        List<TimeSeriesDTO> res = traceQueryServiceI.queryTraceLatencyTimeSeries(queryParam);
+        return MultiResponse.of(res);
+    }
+
+    /**
+     * 查询Trace时间序列请求错误数
+     * <p>
+     * 根据查询参数查询Trace维度列表的时间序列请求错误数，以分钟为单位聚合统计。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return Trace时间序列请求错误数列表
+     */
+    @PostMapping("/query/trace/error_time_series")
+    public MultiResponse<TimeSeriesDTO> queryTraceErrorTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+        log.info("Received trace error time series query request: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        List<TimeSeriesDTO> res = traceQueryServiceI.queryTraceErrorTimeSeries(queryParam);
+        return MultiResponse.of(res);
+    }
+
+    /**
+     * 查询Trace时间序列请求数量
+     * <p>
+     * 根据查询参数查询Trace维度列表的时间序列请求数量，以分钟为单位聚合统计。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
+     * @return Trace时间序列请求数量列表
+     */
+    @PostMapping("/query/trace/count_time_series")
+    public MultiResponse<TimeSeriesDTO> queryTraceCountTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+        log.info("Received trace time series query request: database={}, tableName={}, filter={}, teamId={}",
+                queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
+
+        List<TimeSeriesDTO> res = traceQueryServiceI.queryTraceCountTimeSeries(queryParam);
+        return MultiResponse.of(res);
+    }
+
 }

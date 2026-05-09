@@ -288,7 +288,7 @@
         - minute: 时间点（分钟级别）
         - totalRequests: 总请求数
     -->
-    <select id="queryNodeTimeSeries" resultType="cn.edu.qcl.dto.data.NodeTimeSeriesDTO">
+    <select id="queryNodeCountTimeSeries" resultType="cn.edu.qcl.dto.data.TimeSeriesDTO">
         SELECT
             toStartOfMinute(time) AS minute,
             count() AS totalRequests
@@ -316,7 +316,7 @@
         - minute: 时间点（分钟级别）
         - errorRequests: 错误请求数
     -->
-    <select id="queryNodeErrorTimeSeries" resultType="cn.edu.qcl.dto.data.NodeTimeSeriesDTO">
+    <select id="queryNodeErrorTimeSeries" resultType="cn.edu.qcl.dto.data.TimeSeriesDTO">
         SELECT
             toStartOfMinute(time) AS minute,
             sumIf(1, response_status != 0) AS errorRequests
@@ -347,7 +347,7 @@
         - p75LatencySeconds: P75响应时延（秒）
         - p99LatencySeconds: P99响应时延（秒）
     -->
-    <select id="queryNodeLatencyTimeSeries" resultType="cn.edu.qcl.dto.data.NodeTimeSeriesDTO">
+    <select id="queryNodeLatencyTimeSeries" resultType="cn.edu.qcl.dto.data.TimeSeriesDTO">
         SELECT
             toStartOfMinute(time) AS minute,
             avg(response_duration) / 1000000 AS avgLatencySeconds,
@@ -363,6 +363,7 @@
         GROUP BY minute
         ORDER BY minute ASC
     </select>
+
 
     <!-- 查询Trace维度列表 -->
     <!--
@@ -442,6 +443,93 @@
         <if test="filter != null and filter != ''">
             AND ${filter}
         </if>
+    </select>
+
+    <!-- 查询Trace时间序列响应时延 -->
+    <!--
+        根据查询参数查询Trace维度列表的时间序列响应时延，以分钟为单位聚合。
+
+        参数说明：
+        - database: 数据库名称（如 "apm"）
+        - tableName: 表名称（如 "trace_view"）
+        - filter: 过滤条件SQL
+        - teamId: 团队ID，用于多租户数据隔离
+
+        返回字段（使用驼峰别名映射到Java对象属性）：
+        - minute: 时间点（分钟级别）
+        - avgLatencySeconds: 平均响应时延（秒）
+        - p50LatencySeconds: P50响应时延（秒）
+        - p75LatencySeconds: P75响应时延（秒）
+        - p99LatencySeconds: P99响应时延（秒）
+    -->
+    <select id="queryTraceLatencyTimeSeries" resultType="cn.edu.qcl.dto.data.TimeSeriesDTO">
+        SELECT
+        toStartOfMinute(start_time) AS minute,
+        avg(duration_us) / 1000000 AS avgLatencySeconds,
+        quantile(0.50)(duration_us) / 1000000 AS p50LatencySeconds,
+        quantile(0.75)(duration_us) / 1000000 AS p75LatencySeconds,
+        quantile(0.99)(duration_us) / 1000000 AS p99LatencySeconds
+        FROM `${database}`.`${tableName}`
+        WHERE team_id = #{teamId}
+        <if test="filter != null and filter != ''">
+            AND ${filter}
+        </if>
+        GROUP BY minute
+        ORDER BY minute ASC
+    </select>
+
+    <!-- 查询Trace时间序列请求错误数 -->
+    <!--
+        根据查询参数查询Trace维度列表的时间序列请求错误数，以分钟为单位聚合。
+
+        参数说明：
+        - database: 数据库名称（如 "apm"）
+        - tableName: 表名称（如 "trace_view"）
+        - filter: 过滤条件SQL
+        - teamId: 团队ID，用于多租户数据隔离
+
+        返回字段（使用驼峰别名映射到Java对象属性）：
+        - minute: 时间点（分钟级别）
+        - errorRequests: 错误请求数
+    -->
+    <select id="queryTraceErrorTimeSeries" resultType="cn.edu.qcl.dto.data.TimeSeriesDTO">
+        SELECT
+            toStartOfMinute(start_time) AS minute,
+            SUM(has_error) AS errorRequests
+        FROM `${database}`.`${tableName}`
+        WHERE team_id = #{teamId}
+        <if test="filter != null and filter != ''">
+            AND ${filter}
+        </if>
+        GROUP BY minute
+        ORDER BY minute ASC
+    </select>
+
+    <!-- 查询Trace时间序列请求数量 -->
+    <!--
+        根据查询参数查询Trace维度列表的时间序列请求数量，以分钟为单位聚合。
+
+        参数说明：
+        - database: 数据库名称（如 "apm"）
+        - tableName: 表名称（如 "trace_view"）
+        - filter: 过滤条件SQL
+        - teamId: 团队ID，用于多租户数据隔离
+
+        返回字段（使用驼峰别名映射到Java对象属性）：
+        - minute: 时间点（分钟级别）
+        - totalRequests: 总请求数
+    -->
+    <select id="queryTraceCountTimeSeries" resultType="cn.edu.qcl.dto.data.TimeSeriesDTO">
+        SELECT
+            toStartOfMinute(start_time) AS minute,
+            count() AS totalRequests
+        FROM `${database}`.`${tableName}`
+        WHERE team_id = #{teamId}
+        <if test="filter != null and filter != ''">
+            AND ${filter}
+        </if>
+        GROUP BY minute
+        ORDER BY minute ASC
     </select>
 
 </mapper>

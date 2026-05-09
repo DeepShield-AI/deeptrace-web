@@ -2,7 +2,7 @@ package cn.edu.qcl.mapper.clickhouse;
 
 import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
-import cn.edu.qcl.dto.data.NodeTimeSeriesDTO;
+import cn.edu.qcl.dto.data.TimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
@@ -90,7 +90,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return 时间序列请求数量列表
      */
-    List<NodeTimeSeriesDTO> queryNodeTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryNodeCountTimeSeries(GraphMetricsQueryParam queryParam);
 
     /**
      * 查询单个节点的时间序列请求错误数
@@ -98,7 +98,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return 时间序列请求错误数列表
      */
-    List<NodeTimeSeriesDTO> queryNodeErrorTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryNodeErrorTimeSeries(GraphMetricsQueryParam queryParam);
 
     /**
      * 查询单个节点的时间序列响应时延
@@ -106,7 +106,15 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return 时间序列响应时延列表
      */
-    List<NodeTimeSeriesDTO> queryNodeLatencyTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryNodeLatencyTimeSeries(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询Trace时间序列响应时延
+     *
+     * @param queryParam 查询参数对象
+     * @return Trace时间序列响应时延列表
+     */
+    List<TimeSeriesDTO> queryTraceLatencyTimeSeries(GraphMetricsQueryParam queryParam);
 
     /**
      * 查询Trace维度列表（分页）
@@ -115,6 +123,22 @@ public interface ClickHouseMapper {
      * @return Trace维度信息列表
      */
     List<TraceInfoDTO> queryTraceList(TraceListPageQuery queryParam);
+
+    /**
+     * 查询Trace时间序列请求错误数
+     *
+     * @param queryParam 查询参数对象
+     * @return Trace时间序列请求错误数列表
+     */
+    List<TimeSeriesDTO> queryTraceErrorTimeSeries(GraphMetricsQueryParam queryParam);
+
+    /**
+     * 查询Trace时间序列请求数量
+     *
+     * @param queryParam 查询参数对象
+     * @return Trace时间序列请求数量列表
+     */
+    List<TimeSeriesDTO> queryTraceCountTimeSeries(GraphMetricsQueryParam queryParam);
 
     /**
      * 统计Trace维度列表总数（用于分页）
