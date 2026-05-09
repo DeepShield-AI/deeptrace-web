@@ -157,12 +157,12 @@ public class TraceQueryController {
      * @return span明细分页结果
      */
     @PostMapping("/query/span/details")
-    public PageResponse<SpanDTO> querySpanDetails(@RequestBody TracePageQueryParam queryParam) {
+    public PageResponse<SpanDTO> querySpanDetailsByNode(@RequestBody TracePageQueryParam queryParam) {
         log.info("Received span details query request: database={}, tableName={}, filter={}, teamId={}, pageIndex={}, pageSize={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId(),
                 queryParam.getPageIndex(), queryParam.getPageSize());
 
-        return traceQueryServiceI.querySpanDetails(queryParam);
+        return traceQueryServiceI.querySpanDetailsByNode(queryParam);
     }
 
 
@@ -240,6 +240,7 @@ public class TraceQueryController {
         return traceQueryServiceI.queryTraceList(queryParam);
     }
 
+
     /**
      * 查询Trace时间序列响应时延
      * <p>
@@ -293,5 +294,27 @@ public class TraceQueryController {
         List<TimeSeriesDTO> res = traceQueryServiceI.queryTraceCountTimeSeries(queryParam);
         return MultiResponse.of(res);
     }
+
+
+
+
+    /**
+     * 查询Span维度列表（分页）
+     * <p>
+     * 根据查询参数查询Span维度列表信息。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含filter、teamId及分页信息
+     * @return Span维度列表分页结果
+     */
+    @PostMapping("/query/span/list")
+    public PageResponse<SpanDTO> querySpanList(@RequestBody TracePageQueryParam queryParam) {
+        log.info("Received span list query request: filter={}, teamId={}, pageIndex={}, pageSize={}",
+                queryParam.getFilter(), queryParam.getTeamId(),
+                queryParam.getPageIndex(), queryParam.getPageSize());
+
+        return traceQueryServiceI.querySpanList(queryParam);
+    }
+
 
 }

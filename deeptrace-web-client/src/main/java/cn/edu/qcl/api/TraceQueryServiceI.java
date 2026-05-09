@@ -145,7 +145,7 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含database、tableName、filter、teamId及分页信息
      * @return span明细分页结果
      */
-    PageResponse<SpanDTO> querySpanDetails(TracePageQueryParam queryParam);
+    PageResponse<SpanDTO> querySpanDetailsByNode(TracePageQueryParam queryParam);
 
     /**
      * 查询Trace维度列表（分页）
@@ -157,4 +157,12 @@ public interface TraceQueryServiceI {
      * @return Trace维度列表分页结果
      */
     PageResponse<TraceInfoDTO> queryTraceList(TracePageQueryParam queryParam);
+
+    /**
+     * 查询Span维度列表（分页）
+     *
+     * @param queryParam 查询参数对象，包含filter、teamId及分页信息
+     * @return Span维度列表分页结果
+     */
+    PageResponse<SpanDTO> querySpanList(TracePageQueryParam queryParam);
 }

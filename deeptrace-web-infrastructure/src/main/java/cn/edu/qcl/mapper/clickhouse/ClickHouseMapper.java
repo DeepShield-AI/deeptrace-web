@@ -73,7 +73,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return span明细数据列表
      */
-    List<SpanDTO> querySpanDetails(TracePageQueryParam queryParam);
+    List<SpanDTO> querySpanDetailsByNode(TracePageQueryParam queryParam);
 
     /**
      * 统计单个节点的span明细总数（用于分页）
@@ -81,7 +81,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return span明细总数
      */
-    int countSpanDetails(TracePageQueryParam queryParam);
+    int countSpanDetailsByNode(TracePageQueryParam queryParam);
 
     /**
      * 查询单个节点的时间序列请求数量
@@ -122,6 +122,22 @@ public interface ClickHouseMapper {
      * @return Trace维度信息列表
      */
     List<TraceInfoDTO> queryTraceList(TracePageQueryParam queryParam);
+
+    /**
+     * 查询Span维度列表（分页）
+     *
+     * @param queryParam 查询参数对象
+     * @return Span维度信息列表
+     */
+    List<SpanDTO> querySpanList(TracePageQueryParam queryParam);
+
+    /**
+     * 统计Span维度列表总数（用于分页）
+     *
+     * @param queryParam 查询参数对象
+     * @return Span维度信息列表总数
+     */
+    int countSpanList(TracePageQueryParam queryParam);
 
     /**
      * 查询Trace时间序列请求错误数

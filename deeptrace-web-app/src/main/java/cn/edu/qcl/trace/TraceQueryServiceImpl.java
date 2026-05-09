@@ -457,6 +457,30 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
     }
 
     /**
+     * 查询Span维度列表（分页）
+     * <p>
+     * 根据查询参数查询Span维度列表信息。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含filter、teamId及分页信息
+     * @return Span维度列表分页结果
+     */
+    @Override
+    public PageResponse<SpanDTO> querySpanList(TracePageQueryParam queryParam) {
+        log.info("Querying span list with params: filter={}, teamId={}, pageIndex={}, pageSize={}",
+                queryParam.getFilter(), queryParam.getTeamId(),
+                queryParam.getPageIndex(), queryParam.getPageSize());
+
+        List<SpanDTO> spans = clickHouseMapper.querySpanList(queryParam);
+        log.info("Span list query returned {} records", spans.size());
+
+        int totalCount = clickHouseMapper.countSpanList(queryParam);
+        log.info("Span list total count: {}", totalCount);
+
+        return PageResponse.of(spans, totalCount, queryParam.getPageIndex(), queryParam.getPageSize());
+    }
+
+    /**
      * 查询单个节点的span明细（分页）
      * <p>
      * 根据查询参数查询指定节点的span详细信息。
@@ -466,7 +490,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return span明细分页结果
      */
     @Override
-    public PageResponse<SpanDTO> querySpanDetails(TracePageQueryParam queryParam) {
+    public PageResponse<SpanDTO> querySpanDetailsByNode(TracePageQueryParam queryParam) {
         // 验证输入参数
         validateTracePageQueryParam(queryParam);
 
@@ -475,11 +499,11 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
                 queryParam.getPageIndex(), queryParam.getPageSize());
 
         // 执行SQL查询
-        List<SpanDTO> spans = clickHouseMapper.querySpanDetails(queryParam);
+        List<SpanDTO> spans = clickHouseMapper.querySpanDetailsByNode(queryParam);
         log.info("Span details query returned {} records", spans.size());
 
         // 查询总数用于分页响应
-        int totalCount = clickHouseMapper.countSpanDetails(queryParam);
+        int totalCount = clickHouseMapper.countSpanDetailsByNode(queryParam);
         log.info("Span details total count: {}", totalCount);
 
         return PageResponse.of(spans, totalCount, queryParam.getPageIndex(), queryParam.getPageSize());
