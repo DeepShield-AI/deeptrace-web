@@ -2,6 +2,7 @@ package cn.edu.qcl.security;
 
 import cn.edu.qcl.api.UserServiceI;
 import cn.edu.qcl.dto.data.UserDTO;
+import cn.edu.qcl.utils.UserContextHolder;
 import cn.edu.qcl.utils.UserSessionUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -52,37 +53,35 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        String authHeader = request.getHeader(this.tokenHeader);
-        if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
-            String authToken = authHeader.substring(this.tokenHead.length());// The part after "Bearer "
-            String username = jwtTokenUtil.getUserNameFromToken(authToken);
-            LOGGER.info("checking username:{}", username);
-            if (username != null && UserSessionUtils.getAuthentication() == null) {
-                UserDTO user = this.userServiceI.queryByUsername(username);
-                if (user !=null  && jwtTokenUtil.validateToken(authToken, user.getUsername())) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    LOGGER.info("authenticated user:{}", username);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-            }/*else {
-                throw new RuntimeException("暂未登录或token已经过期");
-            }*/
-        }/*else {
-            throw new RuntimeException("请传入认证token");
-        }*/
-//        } catch (Exception e) {
-//            // 设置响应头
-//            response.setContentType("application/json;charset=UTF-8");
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//
-//            // 构造错误响应
-//            String jsonResponse = "{\"code\":401,\"message\":\"" + e.getMessage() + "\",\"data\":null}";
-//            response.getWriter().write(jsonResponse);
-//            return; // 直接返回，不再继续执行过滤链
-//        }
-        chain.doFilter(request, response);
-    }
+        try {
+            String authHeader = request.getHeader(this.tokenHeader);
+            if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
+                String authToken = authHeader.substring(this.tokenHead.length());// The part after "Bearer "
+                String username = jwtTokenUtil.getUserNameFromToken(authToken);
+                LOGGER.info("checking username:{}", username);
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDTO user = this.userServiceI.queryByUsername(username);
+                    if (user != null && jwtTokenUtil.validateToken(authToken, user.getUsername())) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        LOGGER.info("authenticated user:{}", username);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
 
+                        Long userId = user.getUserId();
+                        if (userId != null) {
+                            UserContextHolder.setUserId(userId);
+                        }
+                    }
+                }/*else {
+                    throw new RuntimeException("暂未登录或token已经过期");
+                }*/
+            }/*else {
+                throw new RuntimeException("请传入认证token");
+            }*/
+            chain.doFilter(request, response);
+        } finally {
+            UserContextHolder.clear(); // 每次请求结束必须清理，防止线程复用时泄露
+        }
+    }
 
 }

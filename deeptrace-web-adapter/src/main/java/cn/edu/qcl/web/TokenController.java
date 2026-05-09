@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static cn.edu.qcl.utils.UserSessionUtils.getCurrentUserId;
+import static cn.edu.qcl.utils.UserContextHolder.getUserId;
 
 /**
  * Token控制器
@@ -35,7 +35,7 @@ public class TokenController {
      */
     @PostMapping("/api-key")
     public SingleResponse<TokenDTO> createApiKey(@Validated @RequestBody ApiKeyCreateParam param) {
-        Long userId = getCurrentUserId();
+        Long userId = getUserId();
         TokenDTO tokenDTO = tokenServiceI.createApiKey(userId, param);
         return SingleResponse.of(tokenDTO);
     }
@@ -47,7 +47,7 @@ public class TokenController {
      */
     @GetMapping("/api-key/list")
     public SingleResponse<List<TokenDTO>> listApiKeys() {
-        Long userId = getCurrentUserId();
+        Long userId = getUserId();
         List<TokenDTO> tokens = tokenServiceI.listApiKeys(userId);
         return SingleResponse.of(tokens);
     }
@@ -63,7 +63,7 @@ public class TokenController {
     public SingleResponse<TokenDTO> updateApiKeyPermission(
             @PathVariable("id") Long id,
             @Validated @RequestBody ApiKeyUpdateParam param) {
-        Long userId = getCurrentUserId();
+        Long userId = getUserId();
         TokenDTO tokenDTO = tokenServiceI.updateApiKeyPermission(userId, id, param);
         return SingleResponse.of(tokenDTO);
     }
@@ -76,7 +76,7 @@ public class TokenController {
      */
     @DeleteMapping("/api-key/{id}")
     public Response deleteApiKey(@PathVariable("id") Long id) {
-        Long userId = getCurrentUserId();
+        Long userId = getUserId();
         boolean success = tokenServiceI.deleteApiKey(userId, id);
         if (success) {
             return Response.buildSuccess();
@@ -91,7 +91,7 @@ public class TokenController {
      */
     @GetMapping("/api-key/count")
     public SingleResponse<Long> countApiKeys() {
-        Long userId = getCurrentUserId();
+        Long userId = getUserId();
         long count = tokenServiceI.countApiKeys(userId);
         return SingleResponse.of(count);
     }

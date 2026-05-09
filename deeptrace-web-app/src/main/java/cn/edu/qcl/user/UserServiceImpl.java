@@ -79,7 +79,6 @@ public class UserServiceImpl implements UserServiceI {
             if(Objects.equals(user.getStatus(), UserStatusEnum.DISABLED.getCode())){
                 Asserts.fail("帐号已被禁用");
             }
-            UserSessionUtils.setUser(user);
 
             token = jwtTokenUtil.generateToken(user);
             //根据用户名修改登录时间

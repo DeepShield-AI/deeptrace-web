@@ -4,6 +4,7 @@ import cn.edu.qcl.api.TokenServiceI;
 import cn.edu.qcl.dto.data.TokenDTO;
 import cn.edu.qcl.dto.data.UserDTO;
 import cn.edu.qcl.utils.ApiKeyGenerator;
+import cn.edu.qcl.utils.UserContextHolder;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -100,10 +101,17 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             // 设置认证信息到SecurityContext
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            Long userId = tokenDTO.getUserId();
+            if (userId != null) {
+                UserContextHolder.setUserId(userId);
+            }
+
             LOGGER.debug("API Key authenticated successfully, userId: {}", tokenDTO.getUserId());
 
         } catch (Exception e) {
             LOGGER.error("API Key authentication failed", e);
+        } finally {
+            UserContextHolder.clear(); // 每次请求结束必须清理，防止线程复用时泄露
         }
 
         chain.doFilter(request, response);
