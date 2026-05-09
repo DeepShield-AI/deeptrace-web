@@ -1,4 +1,4 @@
-package cn.edu.qcl.dto.data;
+package cn.edu.qcl.dto.param;
 
 import com.alibaba.cola.dto.PageQuery;
 import lombok.Data;
@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class TraceListPageQuery extends PageQuery {
+public class TracePageQueryParam extends PageQuery {
     /**
       * Database name (e.g., "apm")
      */

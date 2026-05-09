@@ -6,12 +6,11 @@ import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
-import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TraceInfoDTO;
-import cn.edu.qcl.dto.data.TraceListPageQuery;
+import cn.edu.qcl.dto.param.TracePageQueryParam;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
-import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
+import cn.edu.qcl.dto.param.TraceQueryParam;
 import com.alibaba.cola.dto.PageResponse;
 
 import java.util.List;
@@ -47,7 +46,7 @@ public interface TraceQueryServiceI {
      * @param queryParam the query parameters including database, table, filter, and teamId
      * @return GraphNodeMetricsDTO containing node metrics
      */
-    List<GraphNodeMetricsDTO> queryGraphNodeMetrics(GraphMetricsQueryParam queryParam);
+    List<GraphNodeMetricsDTO> queryGraphNodeMetrics(TraceQueryParam queryParam);
 
     /**
      * 查询服务节点列表及其指标
@@ -58,7 +57,7 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
      * @return 服务节点指标列表
      */
-    List<TableNodeMetricsDTO> queryTableNodeMetrics(GraphMetricsQueryParam queryParam);
+    List<TableNodeMetricsDTO> queryTableNodeMetrics(TraceQueryParam queryParam);
 
     /**
      * 查询拓扑图边及其指标
@@ -69,7 +68,7 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
      * @return 拓扑图边指标列表
      */
-    List<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(GraphMetricsQueryParam queryParam);
+    List<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(TraceQueryParam queryParam);
 
     /**
      * 查询单个节点的时间序列请求数量
@@ -80,7 +79,7 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
      * @return 时间序列请求数量列表
      */
-    List<TimeSeriesDTO> queryNodeCountTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryNodeCountTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询单个节点的时间序列请求错误数
@@ -91,7 +90,7 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
      * @return 时间序列请求错误数列表
      */
-    List<TimeSeriesDTO> queryNodeErrorTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryNodeErrorTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询单个节点的时间序列响应时延
@@ -102,7 +101,7 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
      * @return 时间序列响应时延列表
      */
-    List<TimeSeriesDTO> queryNodeLatencyTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryNodeLatencyTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询Trace时间序列响应时延
@@ -113,7 +112,7 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
      * @return Trace时间序列响应时延列表
      */
-    List<TimeSeriesDTO> queryTraceLatencyTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryTraceLatencyTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询Trace时间序列请求错误数
@@ -124,7 +123,7 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
      * @return Trace时间序列请求错误数列表
      */
-    List<TimeSeriesDTO> queryTraceErrorTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryTraceErrorTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询Trace时间序列请求数量
@@ -135,7 +134,7 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含database、tableName、filter、teamId
      * @return Trace时间序列请求数量列表
      */
-    List<TimeSeriesDTO> queryTraceCountTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryTraceCountTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询单个节点的span明细（分页）
@@ -146,7 +145,7 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含database、tableName、filter、teamId及分页信息
      * @return span明细分页结果
      */
-    PageResponse<SpanDTO> querySpanDetails(SpanDetailsPageQuery queryParam);
+    PageResponse<SpanDTO> querySpanDetails(TracePageQueryParam queryParam);
 
     /**
      * 查询Trace维度列表（分页）
@@ -157,5 +156,5 @@ public interface TraceQueryServiceI {
      * @param queryParam 查询参数对象，包含filter、teamId及分页信息
      * @return Trace维度列表分页结果
      */
-    PageResponse<TraceInfoDTO> queryTraceList(TraceListPageQuery queryParam);
+    PageResponse<TraceInfoDTO> queryTraceList(TracePageQueryParam queryParam);
 }

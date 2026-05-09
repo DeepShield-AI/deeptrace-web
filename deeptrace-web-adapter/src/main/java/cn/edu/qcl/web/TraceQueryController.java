@@ -7,12 +7,11 @@ import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
-import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TraceInfoDTO;
-import cn.edu.qcl.dto.data.TraceListPageQuery;
+import cn.edu.qcl.dto.param.TracePageQueryParam;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
-import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
+import cn.edu.qcl.dto.param.TraceQueryParam;
 import com.alibaba.cola.dto.MultiResponse;
 import com.alibaba.cola.dto.PageResponse;
 import jakarta.annotation.Resource;
@@ -104,7 +103,7 @@ public class TraceQueryController {
      *         总响应数、错误率、平均RTT微秒值、平均RTT毫秒值）
      */
     @PostMapping("/query/graph/node/metrics")
-    public MultiResponse<GraphNodeMetricsDTO> queryGraphNodeMetrics(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<GraphNodeMetricsDTO> queryGraphNodeMetrics(@RequestBody TraceQueryParam queryParam) {
         log.info("Received graph node metrics query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -122,7 +121,7 @@ public class TraceQueryController {
      * @return 服务节点指标列表
      */
     @PostMapping("/query/table/node/metrics")
-    public MultiResponse<TableNodeMetricsDTO> queryTableNodeMetrics(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<TableNodeMetricsDTO> queryTableNodeMetrics(@RequestBody TraceQueryParam queryParam) {
         log.info("Received service node metrics query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -140,7 +139,7 @@ public class TraceQueryController {
      * @return 拓扑图边指标列表
      */
     @PostMapping("/query/graph/edge/metrics")
-    public MultiResponse<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(@RequestBody TraceQueryParam queryParam) {
         log.info("Received graph edge metrics query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -158,7 +157,7 @@ public class TraceQueryController {
      * @return span明细分页结果
      */
     @PostMapping("/query/span/details")
-    public PageResponse<SpanDTO> querySpanDetails(@RequestBody SpanDetailsPageQuery queryParam) {
+    public PageResponse<SpanDTO> querySpanDetails(@RequestBody TracePageQueryParam queryParam) {
         log.info("Received span details query request: database={}, tableName={}, filter={}, teamId={}, pageIndex={}, pageSize={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId(),
                 queryParam.getPageIndex(), queryParam.getPageSize());
@@ -177,7 +176,7 @@ public class TraceQueryController {
      * @return 时间序列请求数量列表
      */
     @PostMapping("/query/node/count_time_series")
-    public MultiResponse<TimeSeriesDTO> queryNodeCountTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<TimeSeriesDTO> queryNodeCountTimeSeries(@RequestBody TraceQueryParam queryParam) {
         log.info("Received node time series query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -195,7 +194,7 @@ public class TraceQueryController {
      * @return 时间序列请求错误数列表
      */
     @PostMapping("/query/node/error_time_series")
-    public MultiResponse<TimeSeriesDTO> queryNodeErrorTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<TimeSeriesDTO> queryNodeErrorTimeSeries(@RequestBody TraceQueryParam queryParam) {
         log.info("Received node error time series query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -213,7 +212,7 @@ public class TraceQueryController {
      * @return 时间序列响应时延列表
      */
     @PostMapping("/query/node/latency_time_series")
-    public MultiResponse<TimeSeriesDTO> queryNodeLatencyTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<TimeSeriesDTO> queryNodeLatencyTimeSeries(@RequestBody TraceQueryParam queryParam) {
         log.info("Received node latency time series query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -233,7 +232,7 @@ public class TraceQueryController {
      * @return Trace维度列表分页结果
      */
     @PostMapping("/query/trace/list")
-    public PageResponse<TraceInfoDTO> queryTraceList(@RequestBody TraceListPageQuery queryParam) {
+    public PageResponse<TraceInfoDTO> queryTraceList(@RequestBody TracePageQueryParam queryParam) {
         log.info("Received trace list query request: filter={}, teamId={}, pageIndex={}, pageSize={}",
                 queryParam.getFilter(), queryParam.getTeamId(),
                 queryParam.getPageIndex(), queryParam.getPageSize());
@@ -251,7 +250,7 @@ public class TraceQueryController {
      * @return Trace时间序列响应时延列表
      */
     @PostMapping("/query/trace/latency_time_series")
-    public MultiResponse<TimeSeriesDTO> queryTraceLatencyTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<TimeSeriesDTO> queryTraceLatencyTimeSeries(@RequestBody TraceQueryParam queryParam) {
         log.info("Received trace latency time series query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -269,7 +268,7 @@ public class TraceQueryController {
      * @return Trace时间序列请求错误数列表
      */
     @PostMapping("/query/trace/error_time_series")
-    public MultiResponse<TimeSeriesDTO> queryTraceErrorTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<TimeSeriesDTO> queryTraceErrorTimeSeries(@RequestBody TraceQueryParam queryParam) {
         log.info("Received trace error time series query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -287,7 +286,7 @@ public class TraceQueryController {
      * @return Trace时间序列请求数量列表
      */
     @PostMapping("/query/trace/count_time_series")
-    public MultiResponse<TimeSeriesDTO> queryTraceCountTimeSeries(@RequestBody GraphMetricsQueryParam queryParam) {
+    public MultiResponse<TimeSeriesDTO> queryTraceCountTimeSeries(@RequestBody TraceQueryParam queryParam) {
         log.info("Received trace time series query request: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 

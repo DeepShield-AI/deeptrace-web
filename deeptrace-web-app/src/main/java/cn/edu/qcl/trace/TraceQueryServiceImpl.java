@@ -7,12 +7,11 @@ import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
-import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TraceInfoDTO;
-import cn.edu.qcl.dto.data.TraceListPageQuery;
+import cn.edu.qcl.dto.param.TracePageQueryParam;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
-import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
+import cn.edu.qcl.dto.param.TraceQueryParam;
 import cn.edu.qcl.mapper.clickhouse.ClickHouseMapper;
 import cn.edu.qcl.trace.strategy.FieldOptionsQueryStrategy;
 import cn.edu.qcl.trace.strategy.FieldOptionsQueryStrategyFactory;
@@ -148,7 +147,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
     @Override
     public FieldOptionsDTO queryFieldOptions(FieldOptionQueryParam queryParam) {
         // Validate input parameters
-        validateQueryParam(queryParam);
+        validateFieldOptionQueryParam(queryParam);
 
         log.info("Querying metrics with params: database={}, tableName={}, method={}, field={}, filter={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getMethod(), 
@@ -164,7 +163,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
     /**
      * Validate query parameters
      */
-    private void validateQueryParam(FieldOptionQueryParam queryParam) {
+    private void validateFieldOptionQueryParam(FieldOptionQueryParam queryParam) {
         if (queryParam == null) {
             throw new IllegalArgumentException("Query parameters cannot be null");
         }
@@ -239,9 +238,9 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      *         总请求数、总错误数、总响应数、错误率、平均RTT微秒值、平均RTT毫秒值）
      */
     @Override
-    public List<GraphNodeMetricsDTO> queryGraphNodeMetrics(GraphMetricsQueryParam queryParam) {
+    public List<GraphNodeMetricsDTO> queryGraphNodeMetrics(TraceQueryParam queryParam) {
         // 验证输入参数
-        validateGraphNodeMetricsParam(queryParam);
+        validateTraceQueryParam(queryParam);
 
         log.info("Querying graph node metrics with params: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
@@ -254,28 +253,6 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
     }
 
     /**
-     * Validate graph node metrics query parameters
-     */
-    private void validateGraphNodeMetricsParam(GraphMetricsQueryParam queryParam) {
-        if (queryParam == null) {
-            throw new IllegalArgumentException("Query parameters cannot be null");
-        }
-        if (!StringUtils.hasText(queryParam.getDatabase())) {
-            throw new IllegalArgumentException("Database name is required");
-        }
-        if (!StringUtils.hasText(queryParam.getTableName())) {
-            throw new IllegalArgumentException("Table name is required");
-        }
-       /* if (queryParam.getFilter() == null) {
-            throw new IllegalArgumentException("Filter is required");
-        }*/
-
-        // Validate database and table name to prevent SQL injection
-        validateIdentifier(queryParam.getDatabase(), "Database");
-        validateIdentifier(queryParam.getTableName(), "Table");
-    }
-
-    /**
      * 查询服务节点列表及其指标
      * <p>
      * 根据查询参数查询服务节点的详细信息，包括各资源名称、IP地址、端口及请求指标。
@@ -285,9 +262,9 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return 服务节点指标列表
      */
     @Override
-    public List<TableNodeMetricsDTO> queryTableNodeMetrics(GraphMetricsQueryParam queryParam) {
+    public List<TableNodeMetricsDTO> queryTableNodeMetrics(TraceQueryParam queryParam) {
         // 验证输入参数
-        validateGraphNodeMetricsParam(queryParam);
+        validateTraceQueryParam(queryParam);
 
         log.info("Querying service node metrics with params: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
@@ -309,9 +286,9 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return 拓扑图边指标列表
      */
     @Override
-    public List<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(GraphMetricsQueryParam queryParam) {
+    public List<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(TraceQueryParam queryParam) {
         // 验证输入参数
-        validateGraphNodeMetricsParam(queryParam);
+        validateTraceQueryParam(queryParam);
 
         log.info("Querying graph edge metrics with params: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
@@ -333,9 +310,9 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return 时间序列请求数量列表
      */
     @Override
-    public List<TimeSeriesDTO> queryNodeCountTimeSeries(GraphMetricsQueryParam queryParam) {
+    public List<TimeSeriesDTO> queryNodeCountTimeSeries(TraceQueryParam queryParam) {
         // 验证输入参数
-        validateGraphNodeMetricsParam(queryParam);
+        validateTraceQueryParam(queryParam);
 
         log.info("Querying node time series with params: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
@@ -357,9 +334,9 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return 时间序列请求错误数列表
      */
     @Override
-    public List<TimeSeriesDTO> queryNodeErrorTimeSeries(GraphMetricsQueryParam queryParam) {
+    public List<TimeSeriesDTO> queryNodeErrorTimeSeries(TraceQueryParam queryParam) {
         // 验证输入参数
-        validateGraphNodeMetricsParam(queryParam);
+        validateTraceQueryParam(queryParam);
 
         log.info("Querying node error time series with params: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
@@ -381,9 +358,9 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return 时间序列响应时延列表
      */
     @Override
-    public List<TimeSeriesDTO> queryNodeLatencyTimeSeries(GraphMetricsQueryParam queryParam) {
+    public List<TimeSeriesDTO> queryNodeLatencyTimeSeries(TraceQueryParam queryParam) {
         // 验证输入参数
-        validateGraphNodeMetricsParam(queryParam);
+        validateTraceQueryParam(queryParam);
 
         log.info("Querying node latency time series with params: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
@@ -405,7 +382,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return Trace时间序列响应时延列表
      */
     @Override
-    public List<TimeSeriesDTO> queryTraceLatencyTimeSeries(GraphMetricsQueryParam queryParam) {
+    public List<TimeSeriesDTO> queryTraceLatencyTimeSeries(TraceQueryParam queryParam) {
         log.info("Querying trace latency time series with params: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -425,7 +402,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return Trace时间序列请求错误数列表
      */
     @Override
-    public List<TimeSeriesDTO> queryTraceErrorTimeSeries(GraphMetricsQueryParam queryParam) {
+    public List<TimeSeriesDTO> queryTraceErrorTimeSeries(TraceQueryParam queryParam) {
         log.info("Querying trace error time series with params: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -445,7 +422,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return Trace时间序列请求数量列表
      */
     @Override
-    public List<TimeSeriesDTO> queryTraceCountTimeSeries(GraphMetricsQueryParam queryParam) {
+    public List<TimeSeriesDTO> queryTraceCountTimeSeries(TraceQueryParam queryParam) {
         log.info("Querying trace time series with params: database={}, tableName={}, filter={}, teamId={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
@@ -465,7 +442,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return Trace维度列表分页结果
      */
     @Override
-    public PageResponse<TraceInfoDTO> queryTraceList(TraceListPageQuery queryParam) {
+    public PageResponse<TraceInfoDTO> queryTraceList(TracePageQueryParam queryParam) {
         log.info("Querying trace list with params: filter={}, teamId={}, pageIndex={}, pageSize={}",
                 queryParam.getFilter(), queryParam.getTeamId(),
                 queryParam.getPageIndex(), queryParam.getPageSize());
@@ -489,9 +466,9 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
      * @return span明细分页结果
      */
     @Override
-    public PageResponse<SpanDTO> querySpanDetails(SpanDetailsPageQuery queryParam) {
+    public PageResponse<SpanDTO> querySpanDetails(TracePageQueryParam queryParam) {
         // 验证输入参数
-        validateSpanDetailsParam(queryParam);
+        validateTracePageQueryParam(queryParam);
 
         log.info("Querying span details with params: database={}, tableName={}, filter={}, teamId={}, pageIndex={}, pageSize={}",
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId(),
@@ -511,7 +488,24 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
     /**
      * Validate span details query parameters
      */
-    private void validateSpanDetailsParam(SpanDetailsPageQuery queryParam) {
+    private void validateTraceQueryParam(TraceQueryParam queryParam) {
+        if (queryParam == null) {
+            throw new IllegalArgumentException("Query parameters cannot be null");
+        }
+        if (!StringUtils.hasText(queryParam.getDatabase())) {
+            throw new IllegalArgumentException("Database name is required");
+        }
+        if (!StringUtils.hasText(queryParam.getTableName())) {
+            throw new IllegalArgumentException("Table name is required");
+        }
+        // Validate database and table name to prevent SQL injection
+        validateIdentifier(queryParam.getDatabase(), "Database");
+        validateIdentifier(queryParam.getTableName(), "Table");
+    }
+    /**
+     * Validate span details query parameters
+     */
+    private void validateTracePageQueryParam(TracePageQueryParam queryParam) {
         if (queryParam == null) {
             throw new IllegalArgumentException("Query parameters cannot be null");
         }

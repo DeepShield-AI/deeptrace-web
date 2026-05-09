@@ -4,11 +4,10 @@ import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
-import cn.edu.qcl.dto.data.SpanDetailsPageQuery;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TraceInfoDTO;
-import cn.edu.qcl.dto.data.TraceListPageQuery;
-import cn.edu.qcl.dto.param.GraphMetricsQueryParam;
+import cn.edu.qcl.dto.param.TracePageQueryParam;
+import cn.edu.qcl.dto.param.TraceQueryParam;
 import cn.edu.qcl.usermap.UserMapEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -50,7 +49,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return 图节点指标数据列表
      */
-    List<GraphNodeMetricsDTO> queryGraphNodeMetrics(GraphMetricsQueryParam queryParam);
+    List<GraphNodeMetricsDTO> queryGraphNodeMetrics(TraceQueryParam queryParam);
 
     /**
      * 查询服务节点列表及其指标
@@ -58,7 +57,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return 服务节点指标数据列表
      */
-    List<TableNodeMetricsDTO> queryTableNodeMetrics(GraphMetricsQueryParam queryParam);
+    List<TableNodeMetricsDTO> queryTableNodeMetrics(TraceQueryParam queryParam);
 
     /**
      * 查询拓扑图边及其指标
@@ -66,7 +65,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return 拓扑图边指标数据列表
      */
-    List<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(GraphMetricsQueryParam queryParam);
+    List<GraphEdgeMetricsDTO> queryGraphEdgeMetrics(TraceQueryParam queryParam);
 
     /**
      * 查询单个节点的span明细
@@ -74,7 +73,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return span明细数据列表
      */
-    List<SpanDTO> querySpanDetails(SpanDetailsPageQuery queryParam);
+    List<SpanDTO> querySpanDetails(TracePageQueryParam queryParam);
 
     /**
      * 统计单个节点的span明细总数（用于分页）
@@ -82,7 +81,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return span明细总数
      */
-    int countSpanDetails(SpanDetailsPageQuery queryParam);
+    int countSpanDetails(TracePageQueryParam queryParam);
 
     /**
      * 查询单个节点的时间序列请求数量
@@ -90,7 +89,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return 时间序列请求数量列表
      */
-    List<TimeSeriesDTO> queryNodeCountTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryNodeCountTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询单个节点的时间序列请求错误数
@@ -98,7 +97,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return 时间序列请求错误数列表
      */
-    List<TimeSeriesDTO> queryNodeErrorTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryNodeErrorTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询单个节点的时间序列响应时延
@@ -106,7 +105,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return 时间序列响应时延列表
      */
-    List<TimeSeriesDTO> queryNodeLatencyTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryNodeLatencyTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询Trace时间序列响应时延
@@ -114,7 +113,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return Trace时间序列响应时延列表
      */
-    List<TimeSeriesDTO> queryTraceLatencyTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryTraceLatencyTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询Trace维度列表（分页）
@@ -122,7 +121,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return Trace维度信息列表
      */
-    List<TraceInfoDTO> queryTraceList(TraceListPageQuery queryParam);
+    List<TraceInfoDTO> queryTraceList(TracePageQueryParam queryParam);
 
     /**
      * 查询Trace时间序列请求错误数
@@ -130,7 +129,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return Trace时间序列请求错误数列表
      */
-    List<TimeSeriesDTO> queryTraceErrorTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryTraceErrorTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 查询Trace时间序列请求数量
@@ -138,7 +137,7 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return Trace时间序列请求数量列表
      */
-    List<TimeSeriesDTO> queryTraceCountTimeSeries(GraphMetricsQueryParam queryParam);
+    List<TimeSeriesDTO> queryTraceCountTimeSeries(TraceQueryParam queryParam);
 
     /**
      * 统计Trace维度列表总数（用于分页）
@@ -146,6 +145,6 @@ public interface ClickHouseMapper {
      * @param queryParam 查询参数对象
      * @return Trace维度列表总数
      */
-    int countTraceList(TraceListPageQuery queryParam);
+    int countTraceList(TracePageQueryParam queryParam);
 
 }

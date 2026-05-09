@@ -3,11 +3,11 @@ package cn.edu.qcl.dto.param;
 import lombok.Data;
 
 /**
- * Graph Node Metrics Query Parameter
- * Used for querying graph node metrics from flow_metrics database
+ * Metrics Query Parameter
+ * Used for querying various metrics including graph node/edge metrics, table node metrics, and time series data
  */
 @Data
-public class GraphMetricsQueryParam {
+public class TraceQueryParam {
     /**
      * Database name (e.g., "flow_metrics")
      */
