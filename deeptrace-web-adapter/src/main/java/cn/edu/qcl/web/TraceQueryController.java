@@ -167,23 +167,6 @@ public class TraceQueryController {
         return traceQueryServiceI.querySpanDetails(queryParam);
     }
 
-    /**
-     * 查询Trace维度列表（分页）
-     * <p>
-     * 根据查询参数查询Trace维度列表信息。
-     * </p>
-     *
-     * @param queryParam 查询参数对象，包含filter、teamId及分页信息
-     * @return Trace维度列表分页结果
-     */
-    @PostMapping("/query/trace/list")
-    public PageResponse<TraceInfoDTO> queryTraceList(@RequestBody TraceListPageQuery queryParam) {
-        log.info("Received trace list query request: filter={}, teamId={}, pageIndex={}, pageSize={}",
-                queryParam.getFilter(), queryParam.getTeamId(),
-                queryParam.getPageIndex(), queryParam.getPageSize());
-
-        return traceQueryServiceI.queryTraceList(queryParam);
-    }
 
     /**
      * 查询单个节点的时间序列请求数量
@@ -237,5 +220,23 @@ public class TraceQueryController {
 
         List<NodeTimeSeriesDTO> res = traceQueryServiceI.queryNodeLatencyTimeSeries(queryParam);
         return MultiResponse.of(res);
+    }
+
+    /**
+     * 查询Trace维度列表（分页）
+     * <p>
+     * 根据查询参数查询Trace维度列表信息。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含filter、teamId及分页信息
+     * @return Trace维度列表分页结果
+     */
+    @PostMapping("/query/trace/list")
+    public PageResponse<TraceInfoDTO> queryTraceList(@RequestBody TraceListPageQuery queryParam) {
+        log.info("Received trace list query request: filter={}, teamId={}, pageIndex={}, pageSize={}",
+                queryParam.getFilter(), queryParam.getTeamId(),
+                queryParam.getPageIndex(), queryParam.getPageSize());
+
+        return traceQueryServiceI.queryTraceList(queryParam);
     }
 }
