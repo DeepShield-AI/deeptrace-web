@@ -2,10 +2,12 @@ package cn.edu.qcl.mapper.clickhouse;
 
 import cn.edu.qcl.dto.data.GraphEdgeMetricsDTO;
 import cn.edu.qcl.dto.data.GraphNodeMetricsDTO;
+import cn.edu.qcl.dto.data.HostMetricTimeSeriesDTO;
 import cn.edu.qcl.dto.data.TimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TraceInfoDTO;
+import cn.edu.qcl.dto.param.HostMetricQueryParam;
 import cn.edu.qcl.dto.param.SingleTraceDetailQueryParam;
 import cn.edu.qcl.dto.param.TracePageQueryParam;
 import cn.edu.qcl.dto.param.TraceQueryParam;
@@ -171,5 +173,25 @@ public interface ClickHouseMapper {
      * @return Trace维度列表总数
      */
     int countTraceList(TracePageQueryParam queryParam);
+
+    // ==================== host metric 查询 ====================
+
+    /**
+     * 查询主机指标时间序列数据
+     * <p>
+     * 根据查询参数查询指定主机的时间序列指标数据，支持不同的聚合类型（avg, max, min）。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含：
+     *                   virtualTableName - 虚拟表名称（如 'zerotrace_agent_host_cpu'）
+     *                   host - 主机标识（如 'auto-vm-202.112.237.33-W16'）
+     *                   metricName - 指标名称（如 'cpu_usage'）
+     *                   aggregationType - 聚合类型：avg, max, min
+     *                   startTime - 时间范围开始（秒级时间戳）
+     *                   endTime - 时间范围结束（秒级时间戳）
+     *                   teamId - 团队ID，用于多租户数据隔离
+     * @return 主机指标时间序列列表
+     */
+    List<HostMetricTimeSeriesDTO> queryHostMetricTimeSeries(HostMetricQueryParam queryParam);
 
 }

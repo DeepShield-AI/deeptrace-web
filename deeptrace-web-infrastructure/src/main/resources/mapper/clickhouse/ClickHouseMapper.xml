@@ -686,4 +686,46 @@
         ORDER BY minute ASC
     </select>
 
+    <!-- 查询主机指标时间序列数据 -->
+    <!--
+        根据查询参数查询指定主机的时间序列指标数据，支持不同的聚合类型（avg, max, min）。
+
+        参数说明：
+        - virtualTableName: 虚拟表名称（如 'zerotrace_agent_host_cpu'）
+        - host: 主机标识（如 'auto-vm-202.112.237.33-W16'）
+        - metricName: 指标名称（如 'cpu_usage'）
+        - aggregationType: 聚合类型：avg, max, min
+        - startTime: 时间范围开始（秒级时间戳）
+        - endTime: 时间范围结束（秒级时间戳）
+        - teamId: 团队ID，用于多租户数据隔离
+
+        返回字段（使用驼峰别名映射到Java对象属性）：
+        - minute: 时间点（分钟级别）
+        - avgValue: 平均值
+        - maxValue: 最大值
+        - minValue: 最小值
+    -->
+    <select id="queryHostMetricTimeSeries" resultType="cn.edu.qcl.dto.data.HostMetricTimeSeriesDTO">
+        SELECT
+            toStartOfMinute(time) AS minute,
+            ${aggregationType}(metrics_float_values[indexOf(metrics_float_names, #{metricName})]) AS value
+        FROM deepflow_tenant.deepflow_collector
+        WHERE
+            virtual_table_name = #{virtualTableName}
+            AND has(tag_names, 'host')
+            AND tag_values[indexOf(tag_names, 'host')] = #{host}
+            AND has(metrics_float_names, #{metricName})
+        <if test="startTime != null">
+            AND time >=  toDateTime64( #{startTime}, 3, 'Asia/Shanghai') AS datetime_value
+        </if>
+        <if test="endTime != null">
+            AND time  &lt;= toDateTime64( #{endTime}, 3, 'Asia/Shanghai') AS datetime_value
+        </if>
+        <if test="teamId != null">
+            AND team_id = #{teamId}
+        </if>
+        GROUP BY minute
+        ORDER BY minute DESC
+    </select>
+
 </mapper>
