@@ -23,6 +23,16 @@
             <groupId>cn.edu.qcl</groupId>
             <artifactId>deeptrace-web-client</artifactId>
         </dependency>
+        <!-- SnakeYAML for YAML processing -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+        </dependency>
+        <!-- Jackson YAML module -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
