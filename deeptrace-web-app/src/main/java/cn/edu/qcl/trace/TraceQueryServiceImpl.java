@@ -14,6 +14,7 @@ import cn.edu.qcl.dto.param.TracePageQueryParam;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.TraceQueryParam;
 import cn.edu.qcl.mapper.clickhouse.ClickHouseMapper;
+import cn.edu.qcl.trace.gateway.FieldIdNameMappingGateway;
 import cn.edu.qcl.trace.strategy.FieldOptionsQueryStrategy;
 import cn.edu.qcl.trace.strategy.FieldOptionsQueryStrategyFactory;
 import com.alibaba.cola.dto.PageResponse;
@@ -44,6 +45,8 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
 
     @Resource
     private ClickHouseMapper clickHouseMapper;
+    @Resource
+    private FieldIdNameMappingGateway fieldIdNameMappingGateway;
 
     /**
      * Fixed filter fields configuration for different tables
@@ -605,6 +608,11 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         log.info("Span details by trace query returned {} records", spans.size());
 
         return spans;
+    }
+
+    @Override
+    public List<Map<String, Object>> getEnumMapping(String fieldName){
+        return fieldIdNameMappingGateway.getEnumMapping(fieldName);
     }
 
 }

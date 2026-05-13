@@ -13,9 +13,11 @@ import cn.edu.qcl.dto.param.SingleTraceDetailQueryParam;
 import cn.edu.qcl.dto.param.TracePageQueryParam;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.TraceQueryParam;
+import cn.edu.qcl.trace.gateway.FieldIdNameMappingGateway;
 import com.alibaba.cola.dto.MultiResponse;
 import com.alibaba.cola.dto.PageResponse;
 import jakarta.annotation.Resource;
+import jakarta.servlet.ServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Metric Query Controller
@@ -37,6 +40,9 @@ public class TraceQueryController {
 
     @Resource
     private TraceQueryServiceI traceQueryServiceI;
+
+    @Resource
+    private FieldIdNameMappingGateway fieldIdNameMappingGateway;
 
     /**
      * 查询指定字段的可选值（用于下拉框等UI组件）及 字段名称与字段ID的映射
@@ -349,5 +355,27 @@ public class TraceQueryController {
         return traceQueryServiceI.querySpanList(queryParam);
     }
 
+    /**
+     * 获取字段的枚举值映射
+     * <p>
+     * 根据字段名称查询该字段的ID到名称的映射关系，用于前端下拉框等UI组件展示。
+     * 支持的字段类型包括：
+     * - 特殊设备字段：l3_device_id、l3_device_type、auto_instance_id、auto_service_id
+     * - 标准设备字段：region_id、az_id、pod_cluster_id、pod_ns_id、pod_group_id、pod_id、pod_node_id、service_id、l3_epc_id、subnet_id
+     * - 主机字段：host_id
+     * </p>
+     *
+     * @param fieldName 字段名称（如 "l3_device_id", "auto_instance_id", "az_id", "host_id" 等）
+     * @return 枚举映射列表，每个元素包含id和name字段；特殊设备字段还包含type字段
+     */
+    @GetMapping("/query/field/enum-mapping")
+    public MultiResponse<Map<String, Object>> getFieldEnumMapping(
+            @RequestParam(value = "fieldName", required = true) String fieldName, ServletRequest servletRequest) {
+
+        log.info("Received get field enum mapping request: fieldName={}", fieldName);
+
+        List<Map<String, Object>> result = traceQueryServiceI.getEnumMapping(fieldName);
+        return MultiResponse.of(result);
+    }
 
 }

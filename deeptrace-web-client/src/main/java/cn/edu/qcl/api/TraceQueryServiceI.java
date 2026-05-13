@@ -15,6 +15,7 @@ import cn.edu.qcl.dto.param.TraceQueryParam;
 import com.alibaba.cola.dto.PageResponse;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Metric Query Service Interface
@@ -174,4 +175,12 @@ public interface TraceQueryServiceI {
      * @return span明细列表
      */
     List<SpanDTO> querySpanDetailsByTrace(SingleTraceDetailQueryParam queryParam);
+
+    /**
+     * 获取枚举映射
+     *
+     * @param fieldName 字段名称
+     * @return 枚举映射
+     */
+    List<Map<String, Object>> getEnumMapping(String fieldName);
 }
