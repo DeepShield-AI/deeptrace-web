@@ -9,6 +9,7 @@ import cn.edu.qcl.dto.data.TimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TraceInfoDTO;
+import cn.edu.qcl.dto.param.SingleTraceDetailQueryParam;
 import cn.edu.qcl.dto.param.TracePageQueryParam;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.TraceQueryParam;
@@ -217,6 +218,38 @@ public class TraceQueryController {
                 queryParam.getDatabase(), queryParam.getTableName(), queryParam.getFilter(), queryParam.getTeamId());
 
         List<TimeSeriesDTO> res = traceQueryServiceI.queryNodeLatencyTimeSeries(queryParam);
+        return MultiResponse.of(res);
+    }
+
+    /**
+     * 根据traceId查询span明细列表
+     * <p>
+     * 根据traceId和时间范围查询span明细列表。
+     * </p>
+     *
+     * @param teamId 团队ID，用于多租户数据隔离
+     * @param traceId Trace ID
+     * @param startTime 开始时间（秒级时间戳）
+     * @param endTime 结束时间（秒级时间戳）
+     * @return span明细列表
+     */
+    @GetMapping("/query/span/details/by_trace")
+    public MultiResponse<SpanDTO> querySpanDetailsByTrace(
+            @RequestParam(value = "teamId", required = false) Long teamId,
+            @RequestParam(value = "traceId", required = true) String traceId,
+            @RequestParam(value = "startTime", required = false) Long startTime,
+            @RequestParam(value = "endTime", required = false) Long endTime) {
+
+        log.info("Received span details by trace request: traceId={}, startTime={}, endTime={}, teamId={}",
+                traceId, startTime, endTime, teamId);
+
+        SingleTraceDetailQueryParam queryParam = new SingleTraceDetailQueryParam();
+        queryParam.setTeamId(teamId);
+        queryParam.setTraceId(traceId);
+        queryParam.setStartTime(startTime);
+        queryParam.setEndTime(endTime);
+
+        List<SpanDTO> res = traceQueryServiceI.querySpanDetailsByTrace(queryParam);
         return MultiResponse.of(res);
     }
 

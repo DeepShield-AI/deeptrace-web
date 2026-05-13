@@ -6,6 +6,7 @@ import cn.edu.qcl.dto.data.TimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TraceInfoDTO;
+import cn.edu.qcl.dto.param.SingleTraceDetailQueryParam;
 import cn.edu.qcl.dto.param.TracePageQueryParam;
 import cn.edu.qcl.dto.param.TraceQueryParam;
 import cn.edu.qcl.usermap.UserMapEntity;
@@ -138,6 +139,14 @@ public interface ClickHouseMapper {
      * @return Span维度信息列表总数
      */
     int countSpanList(TracePageQueryParam queryParam);
+
+    /**
+     * 根据traceId查询span明细列表
+     *
+     * @param queryParam 查询参数对象，包含teamId、traceId、startTime、endTime
+     * @return span明细列表
+     */
+    List<SpanDTO> querySpanDetailsByTrace(SingleTraceDetailQueryParam queryParam);
 
     /**
      * 查询Trace时间序列请求错误数

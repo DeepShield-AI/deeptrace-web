@@ -9,6 +9,7 @@ import cn.edu.qcl.dto.data.TimeSeriesDTO;
 import cn.edu.qcl.dto.data.SpanDTO;
 import cn.edu.qcl.dto.data.TableNodeMetricsDTO;
 import cn.edu.qcl.dto.data.TraceInfoDTO;
+import cn.edu.qcl.dto.param.SingleTraceDetailQueryParam;
 import cn.edu.qcl.dto.param.TracePageQueryParam;
 import cn.edu.qcl.dto.param.FieldOptionQueryParam;
 import cn.edu.qcl.dto.param.TraceQueryParam;
@@ -453,7 +454,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         int totalCount = clickHouseMapper.countTraceList(queryParam);
         log.info("Trace list total count: {}", totalCount);
 
-        return PageResponse.of(traces, totalCount, queryParam.getPageIndex(), queryParam.getPageSize());
+        return PageResponse.of(traces, totalCount,  queryParam.getPageSize(),queryParam.getPageIndex());
     }
 
     /**
@@ -477,7 +478,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         int totalCount = clickHouseMapper.countSpanList(queryParam);
         log.info("Span list total count: {}", totalCount);
 
-        return PageResponse.of(spans, totalCount, queryParam.getPageIndex(), queryParam.getPageSize());
+        return PageResponse.of(spans, totalCount, queryParam.getPageSize(), queryParam.getPageIndex());
     }
 
     /**
@@ -506,7 +507,7 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
         int totalCount = clickHouseMapper.countSpanDetailsByNode(queryParam);
         log.info("Span details total count: {}", totalCount);
 
-        return PageResponse.of(spans, totalCount, queryParam.getPageIndex(), queryParam.getPageSize());
+        return PageResponse.of(spans, totalCount, queryParam.getPageSize(), queryParam.getPageIndex());
     }
 
     /**
@@ -583,6 +584,27 @@ public class TraceQueryServiceImpl implements TraceQueryServiceI {
             throw new IllegalArgumentException(
                     fieldName + " name contains forbidden characters: " + identifier);
         }
+    }
+
+    /**
+     * 根据traceId查询span明细列表
+     * <p>
+     * 根据traceId和时间范围查询span明细列表。
+     * </p>
+     *
+     * @param queryParam 查询参数对象，包含teamId、traceId、startTime、endTime
+     * @return span明细列表
+     */
+    @Override
+    public List<SpanDTO> querySpanDetailsByTrace(SingleTraceDetailQueryParam queryParam) {
+        log.info("Querying span details by trace: traceId={}, startTime={}, endTime={}, teamId={}",
+                queryParam.getTraceId(), queryParam.getStartTime(),
+                queryParam.getEndTime(), queryParam.getTeamId());
+
+        List<SpanDTO> spans = clickHouseMapper.querySpanDetailsByTrace(queryParam);
+        log.info("Span details by trace query returned {} records", spans.size());
+
+        return spans;
     }
 
 }

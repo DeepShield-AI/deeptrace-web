@@ -543,6 +543,62 @@
         </if>
     </select>
 
+    <!-- 根据traceId查询span明细列表 -->
+    <!--
+        根据traceId和时间范围查询span明细列表。
+
+        参数说明：
+        - teamId: 团队ID，用于多租户数据隔离
+        - traceId: Trace ID
+        - startTime: 开始时间（秒级时间戳）
+        - endTime: 结束时间（秒级时间戳）
+
+        返回字段：同querySpanList
+    -->
+    <select id="querySpanDetailsByTrace" resultType="cn.edu.qcl.dto.data.SpanDTO">
+        SELECT
+            trace_id AS traceId,
+            span_id AS spanId,
+            parent_span_id AS parentSpanId,
+            start_time AS startTime,
+            end_time AS endTime,
+            response_duration AS responseDuration,
+            app_service AS appService,
+            l7_protocol AS l7Protocol,
+            request_domain AS requestDomain,
+            request_resource AS requestResource,
+            endpoint AS endpoint,
+            response_status AS responseStatus,
+            response_code AS responseCode,
+            app_instance AS appInstance,
+            ip4_0 AS ip40,
+            ip4_1 AS ip41,
+            ip6_0 AS ip60,
+            ip6_1 AS ip61,
+            client_port AS clientPort,
+            server_port AS serverPort,
+            is_tls AS isTls,
+            process_id_0 AS processId0,
+            process_id_1 AS processId1,
+            attribute_names AS attributeNames,
+            attribute_values AS attributeValues,
+            biz_protocol AS bizProtocol,
+            version AS version,
+            request_type AS requestType,
+            request_id AS requestId,
+            response_exception AS responseException,
+            response_result AS responseResult,
+            request_length AS requestLength,
+            response_length AS responseLength
+        FROM flow_log.`l7_flow_log`
+        WHERE team_id = #{teamId}
+          AND span_kind = 2
+          AND trace_id = #{traceId}
+          AND time >= toDateTime(#{startTime}, 'Asia/Shanghai')
+          AND time >= toDateTime(#{startTime}, 'Asia/Shanghai')
+          AND time &lt;= toDateTime(#{endTime}, 'Asia/Shanghai')
+    </select>
+
     <!-- 查询Trace时间序列响应时延 -->
     <!--
         根据查询参数查询Trace维度列表的时间序列响应时延，以分钟为单位聚合。
