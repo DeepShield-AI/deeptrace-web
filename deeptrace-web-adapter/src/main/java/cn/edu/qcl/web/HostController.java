@@ -1,6 +1,6 @@
 package cn.edu.qcl.web;
 
-import cn.edu.qcl.api.HostMetricServiceI;
+import cn.edu.qcl.api.HostServiceI;
 import cn.edu.qcl.dto.data.HostMetricTimeSeriesDTO;
 import cn.edu.qcl.dto.param.HostMetricQueryParam;
 import com.alibaba.cola.dto.MultiResponse;
@@ -20,10 +20,10 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/host/metric")
-public class HostMetricController {
+public class HostController {
 
     @Resource
-    private HostMetricServiceI hostMetricServiceI;
+    private HostServiceI hostServiceI;
 
     /**
      * Query host metric time series data
@@ -63,7 +63,7 @@ public class HostMetricController {
         queryParam.setEndTime(endTime);
         queryParam.setTeamId(teamId);
 
-        List<HostMetricTimeSeriesDTO> res = hostMetricServiceI.queryHostMetricTimeSeries(queryParam);
+        List<HostMetricTimeSeriesDTO> res = hostServiceI.queryHostMetricTimeSeries(queryParam);
         return MultiResponse.of(res);
     }
 }

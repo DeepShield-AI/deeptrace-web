@@ -9,7 +9,7 @@ import java.util.List;
  * Host Metric Query Service Interface
  * Provides host metric query functionality for different dimensions and aggregation types
  */
-public interface HostMetricServiceI {
+public interface HostServiceI {
 
     /**
      * Query host metric time series data

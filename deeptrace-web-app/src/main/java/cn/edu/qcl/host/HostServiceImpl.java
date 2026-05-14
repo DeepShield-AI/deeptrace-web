@@ -1,6 +1,6 @@
-package cn.edu.qcl.hostmetric;
+package cn.edu.qcl.host;
 
-import cn.edu.qcl.api.HostMetricServiceI;
+import cn.edu.qcl.api.HostServiceI;
 import cn.edu.qcl.dto.data.HostMetricTimeSeriesDTO;
 import cn.edu.qcl.dto.param.HostMetricQueryParam;
 import cn.edu.qcl.enums.HostMetricTypeEnum;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class HostMetricServiceImpl implements HostMetricServiceI {
+public class HostServiceImpl implements HostServiceI {
 
     @Resource
     private ClickHouseMapper clickHouseMapper;
