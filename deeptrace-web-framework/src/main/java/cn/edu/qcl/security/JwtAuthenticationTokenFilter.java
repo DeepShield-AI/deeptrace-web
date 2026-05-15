@@ -15,9 +15,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -32,6 +34,8 @@ import java.io.IOException;
  */
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+    
     @Autowired
     private UserServiceI userServiceI;
     @Autowired
@@ -40,11 +44,21 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
+    @Value("${secure.ignored.urls}")
+    private List<String> ignoredUrls;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
+        // todo-2026.05.15 待数据库ready后删除  检查请求URL是否在白名单中，如果是则跳过JWT验证
+        String requestUri = request.getRequestURI();
+        if (isIgnoredUrl(requestUri)) {
+            LOGGER.debug("Request URI {} is in ignored urls, skipping JWT authentication", requestUri);
+            chain.doFilter(request, response);
+            return;
+        }
+        
         // 如果请求头中有 X-API-Key，跳过 JWT 验证，交给 ApiKeyAuthenticationFilter 处理
         String apiKey = request.getHeader("X-API-Key");
         if (apiKey != null && !apiKey.isEmpty()) {
@@ -82,6 +96,26 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         } finally {
             UserContextHolder.clear(); // 每次请求结束必须清理，防止线程复用时泄露
         }
+    }
+    
+    /**
+     *  todo-2026.05.15 待数据库ready后删除
+     *  检查请求URL是否在白名单中
+     * @param requestUri 请求URI
+     * @return 是否在白名单中
+     */
+    private boolean isIgnoredUrl(String requestUri) {
+        if (ignoredUrls == null || ignoredUrls.isEmpty()) {
+            return false;
+        }
+        for (String pattern : ignoredUrls) {
+            // 支持Ant风格路径匹配，并去除前后空白
+            String trimmedPattern = pattern.trim();
+            if (pathMatcher.match(trimmedPattern, requestUri)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
