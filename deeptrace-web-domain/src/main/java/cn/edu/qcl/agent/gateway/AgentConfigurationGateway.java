@@ -26,4 +26,12 @@ public interface AgentConfigurationGateway {
      * @return total count
      */
     long count(AgentConfigurationPageQuery query);
+
+    /**
+     * Query agent configuration by agent lcuuid
+     *
+     * @param agentLcuuid agent unique identifier
+     * @return AgentConfigurationDTO or null if not found
+     */
+    AgentConfigurationDTO queryByAgentLcuuid(String agentLcuuid);
 }

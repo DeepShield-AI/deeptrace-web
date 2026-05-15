@@ -8,6 +8,9 @@ import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+import java.util.UUID;
+
 /**
  * Agent User Configuration Gateway Implementation
  * Implements data access operations for agent_user_configuration
@@ -29,6 +32,33 @@ public class AgentUserConfigurationGatewayImpl implements AgentUserConfiguration
 
         AgentUserConfigurationDO result = agentUserConfigurationMapper.queryLatest(agentUserConfigurationDO);
         return convertToDTO(result);
+    }
+
+    @Override
+    public void insertOrUpdatePending(String agentLcuuid, String yaml, Long userId) {
+        // Query existing pending record
+        AgentUserConfigurationDO existing = agentUserConfigurationMapper.queryPendingByAgentLcuuid(agentLcuuid);
+        
+        Date now = new Date();
+        
+        if (existing != null) {
+            // Update existing record
+            existing.setYaml(yaml);
+            existing.setUserId(userId);
+            existing.setUpdatedAt(now);
+            agentUserConfigurationMapper.updateById(existing);
+        } else {
+            // Insert new record with status='pending'
+            AgentUserConfigurationDO newRecord = new AgentUserConfigurationDO();
+            newRecord.setLcuuid(UUID.randomUUID().toString());
+            newRecord.setAgentLcuuid(agentLcuuid);
+            newRecord.setYaml(yaml);
+            newRecord.setUserId(userId);
+            newRecord.setStatus("pending");
+            newRecord.setCreatedAt(now);
+            newRecord.setUpdatedAt(now);
+            agentUserConfigurationMapper.insert(newRecord);
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 package cn.edu.qcl.web;
 
 import cn.edu.qcl.api.AgentServiceI;
+import cn.edu.qcl.dto.SaveAgentUserConfigurationCmd;
 import cn.edu.qcl.dto.data.AgentConfigurationDTO;
 import cn.edu.qcl.dto.data.AgentDTO;
 import cn.edu.qcl.dto.data.AgentUserConfigurationDTO;
@@ -8,10 +9,13 @@ import cn.edu.qcl.dto.param.AgentConfigurationPageQuery;
 import cn.edu.qcl.dto.param.AgentPageQuery;
 import cn.edu.qcl.dto.param.AgentUserConfigurationQuery;
 import com.alibaba.cola.dto.PageResponse;
+import com.alibaba.cola.dto.Response;
 import com.alibaba.cola.dto.SingleResponse;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -124,5 +128,27 @@ public class AgentController {
         query.setUserId(userId);
 
         return agentServiceI.queryLatestAgentUserConfiguration(query);
+    }
+
+    /**
+     * Save agent user configuration
+     * <p>
+     * Merges user-modified configuration items with the base configuration from agent_configuration table,
+     * and saves the merged full YAML configuration to agent_user_configuration table.
+     * Ensures only one record with status='pending' exists for the agent.
+     * </p>
+     *
+     * @param cmd the save command containing:
+     *            agentLcuuid - agent unique identifier (required)
+     *            configItems - list of user-modified configuration items with key-value pairs
+     *                          Example: [{ "key": "static_config.profiler", "value": false }, { "key": "log_level", "value": "DEBUG" }]
+     * @return Response indicating success or failure
+     */
+    @PostMapping("/user-configuration/save")
+    public Response saveAgentUserConfiguration(@RequestBody SaveAgentUserConfigurationCmd cmd) {
+        log.info("Received save agent user configuration request: agentLcuuid={}, configItems count={}",
+                cmd.getAgentLcuuid(), cmd.getConfigItems() != null ? cmd.getConfigItems().size() : 0);
+
+        return agentServiceI.saveAgentUserConfiguration(cmd);
     }
 }

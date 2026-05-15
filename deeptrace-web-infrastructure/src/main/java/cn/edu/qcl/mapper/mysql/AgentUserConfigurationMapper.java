@@ -16,4 +16,28 @@ public interface AgentUserConfigurationMapper {
      * @return the latest AgentUserConfigurationDO or null if not found
      */
     AgentUserConfigurationDO queryLatest(@Param("agentUserConfigurationDO") AgentUserConfigurationDO agentUserConfigurationDO);
+
+    /**
+     * Query pending record by agent lcuuid
+     *
+     * @param agentLcuuid agent unique identifier
+     * @return AgentUserConfigurationDO with status='pending' or null if not found
+     */
+    AgentUserConfigurationDO queryPendingByAgentLcuuid(@Param("agentLcuuid") String agentLcuuid);
+
+    /**
+     * Insert a new agent user configuration record
+     *
+     * @param agentUserConfigurationDO the record to insert
+     * @return number of rows affected
+     */
+    int insert(AgentUserConfigurationDO agentUserConfigurationDO);
+
+    /**
+     * Update an existing agent user configuration record
+     *
+     * @param agentUserConfigurationDO the record to update
+     * @return number of rows affected
+     */
+    int updateById(AgentUserConfigurationDO agentUserConfigurationDO);
 }

@@ -31,4 +31,28 @@
         limit 1
     </select>
 
+    <!-- Query pending record by agent lcuuid -->
+    <select id="queryPendingByAgentLcuuid" resultMap="AgentUserConfigurationMap">
+        select id, lcuuid, agent_lcuuid, yaml, user_id, status, created_at, updated_at
+        from agent_user_configuration
+        where agent_lcuuid = #{agentLcuuid}
+          and status = 'pending'
+        limit 1
+    </select>
+
+    <!-- Insert a new agent user configuration record -->
+    <insert id="insert" parameterType="cn.edu.qcl.agent.AgentUserConfigurationDO">
+        insert into agent_user_configuration (lcuuid, agent_lcuuid, yaml, user_id, status, created_at, updated_at)
+        values (#{lcuuid}, #{agentLcuuid}, #{yaml}, #{userId}, #{status}, now(), now())
+    </insert>
+
+    <!-- Update an existing agent user configuration record -->
+    <update id="updateById" parameterType="cn.edu.qcl.agent.AgentUserConfigurationDO">
+        update agent_user_configuration
+        set yaml = #{yaml},
+            user_id = #{userId},
+            updated_at = now()
+        where id = #{id}
+    </update>
+
 </mapper>

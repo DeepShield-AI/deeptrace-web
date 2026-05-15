@@ -49,21 +49,21 @@
                synced_analyzer_at, synced_controller_at
         from agent_basic
         <where>
-            <if test="agentDO.lcuuid != null and agentDO.lcuuid != ''">
-                and lcuuid = #{agentDO.lcuuid}
+            <if test="lcuuid != null and lcuuid != ''">
+                and lcuuid = #{lcuuid}
             </if>
-            <if test="agentDO.name != null and agentDO.name != ''">
-                and name like concat('%', #{agentDO.name}, '%')
+            <if test="name != null and name != ''">
+                and name like concat('%', #{name}, '%')
             </if>
-            <if test="agentDO.state != null and agentDO.state != ''">
-                and state = #{agentDO.state}
+            <if test="state != null and state != ''">
+                and state = #{state}
             </if>
-            <if test="agentDO.userId != null">
-                and user_id = #{agentDO.userId}
+            <if test="userId != null">
+                and user_id = #{userId}
             </if>
         </where>
         order by create_time desc
-        limit ${(pageable.pageNumber - 1) * pageable.pageSize} , #{pageable.pageSize}
+        limit (#{pageable.pageNumber} - 1) * #{pageable.pageSize} , #{pageable.pageSize}
     </select>
 
     <!-- Count total rows with filter conditions -->
@@ -71,17 +71,17 @@
         select count(1)
         from agent_basic
         <where>
-            <if test="agentDO.lcuuid != null and agentDO.lcuuid != ''">
-                and lcuuid = #{agentDO.lcuuid}
+            <if test="lcuuid != null and lcuuid != ''">
+                and lcuuid = #{lcuuid}
             </if>
-            <if test="agentDO.name != null and agentDO.name != ''">
-                and name like concat('%', #{agentDO.name}, '%')
+            <if test="name != null and name != ''">
+                and name like concat('%', #{name}, '%')
             </if>
-            <if test="agentDO.state != null and agentDO.state != ''">
-                and state = #{agentDO.state}
+            <if test="state != null and state != ''">
+                and state = #{state}
             </if>
-            <if test="agentDO.userId != null">
-                and user_id = #{agentDO.userId}
+            <if test="userId != null">
+                and user_id = #{userId}
             </if>
         </where>
     </select>

@@ -19,7 +19,7 @@ public interface AgentMapper {
      * @param pageable pagination parameters
      * @return list of agents
      */
-    List<AgentDO> queryByPage(@Param("agentDO") AgentDO agentDO, @Param("pageable") Pageable pageable);
+    List<AgentDO> queryByPage(AgentDO agentDO, @Param("pageable") Pageable pageable);
 
     /**
      * Count total rows with filter conditions
@@ -27,5 +27,5 @@ public interface AgentMapper {
      * @param agentDO filter conditions
      * @return total count
      */
-    long count(@Param("agentDO") AgentDO agentDO);
+    long count(AgentDO agentDO);
 }

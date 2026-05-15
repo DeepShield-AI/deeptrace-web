@@ -28,4 +28,12 @@ public interface AgentConfigurationMapper {
      * @return total count
      */
     long count(@Param("agentConfigurationDO") AgentConfigurationDO agentConfigurationDO);
+
+    /**
+     * Query agent configuration by agent lcuuid
+     *
+     * @param agentLcuuid agent unique identifier
+     * @return AgentConfigurationDO or null if not found
+     */
+    AgentConfigurationDO queryByAgentLcuuid(@Param("agentLcuuid") String agentLcuuid);
 }

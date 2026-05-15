@@ -42,4 +42,12 @@
         </where>
     </select>
 
+    <!-- Query by agent lcuuid -->
+    <select id="queryByAgentLcuuid" resultMap="AgentConfigurationMap">
+        select id, lcuuid, agent_lcuuid, yaml, user_id, created_at, updated_at
+        from agent_configuration
+        where agent_lcuuid = #{agentLcuuid}
+        limit 1
+    </select>
+
 </mapper>

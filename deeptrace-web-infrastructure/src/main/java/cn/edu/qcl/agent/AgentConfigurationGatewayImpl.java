@@ -50,6 +50,15 @@ public class AgentConfigurationGatewayImpl implements AgentConfigurationGateway 
         return agentConfigurationMapper.count(agentConfigurationDO);
     }
 
+    @Override
+    public AgentConfigurationDTO queryByAgentLcuuid(String agentLcuuid) {
+        if (agentLcuuid == null || agentLcuuid.isEmpty()) {
+            return null;
+        }
+        AgentConfigurationDO result = agentConfigurationMapper.queryByAgentLcuuid(agentLcuuid);
+        return convertToDTO(result);
+    }
+
     /**
      * Convert DO to DTO
      *

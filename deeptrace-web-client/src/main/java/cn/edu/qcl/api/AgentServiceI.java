@@ -1,5 +1,6 @@
 package cn.edu.qcl.api;
 
+import cn.edu.qcl.dto.SaveAgentUserConfigurationCmd;
 import cn.edu.qcl.dto.data.AgentConfigurationDTO;
 import cn.edu.qcl.dto.data.AgentDTO;
 import cn.edu.qcl.dto.data.AgentUserConfigurationDTO;
@@ -7,6 +8,7 @@ import cn.edu.qcl.dto.param.AgentConfigurationPageQuery;
 import cn.edu.qcl.dto.param.AgentPageQuery;
 import cn.edu.qcl.dto.param.AgentUserConfigurationQuery;
 import com.alibaba.cola.dto.PageResponse;
+import com.alibaba.cola.dto.Response;
 import com.alibaba.cola.dto.SingleResponse;
 
 /**
@@ -63,4 +65,20 @@ public interface AgentServiceI {
      * @return SingleResponse containing AgentUserConfigurationDTO or null if not found
      */
     SingleResponse<AgentUserConfigurationDTO> queryLatestAgentUserConfiguration(AgentUserConfigurationQuery query);
+
+    /**
+     * Save agent user configuration
+     * <p>
+     * Merges user-modified configuration items with the base configuration from agent_configuration table,
+     * and saves the merged full YAML configuration to agent_user_configuration table.
+     * Ensures only one record with status='pending' exists for the agent.
+     * </p>
+     *
+     * @param cmd the save command containing:
+     *            agentLcuuid - agent unique identifier (required)
+     *            configItems - list of user-modified configuration items with key-value pairs
+     *                          Example: [{ "key": "static_config.profiler", "value": false }, { "key": "log_level", "value": "DEBUG" }]
+     * @return Response indicating success or failure
+     */
+    Response saveAgentUserConfiguration(SaveAgentUserConfigurationCmd cmd);
 }
