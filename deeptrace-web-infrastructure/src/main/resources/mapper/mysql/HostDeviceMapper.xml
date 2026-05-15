@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.qcl.mapper.mysql.HostDeviceMapper">
+
+    <resultMap type="cn.edu.qcl.host.HostDeviceDO" id="HostDeviceMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="lcuuid" column="lcuuid" jdbcType="CHAR"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="deletedAt" column="deleted_at" jdbcType="TIMESTAMP"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="alias" column="alias" jdbcType="CHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="ip" column="ip" jdbcType="CHAR"/>
+        <result property="hostname" column="hostname" jdbcType="CHAR"/>
+        <result property="htype" column="htype" jdbcType="INTEGER"/>
+        <result property="createMethod" column="create_method" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="userPasswd" column="user_passwd" jdbcType="VARCHAR"/>
+        <result property="vcpuNum" column="vcpu_num" jdbcType="INTEGER"/>
+        <result property="memTotal" column="mem_total" jdbcType="INTEGER"/>
+        <result property="az" column="az" jdbcType="CHAR"/>
+        <result property="region" column="region" jdbcType="CHAR"/>
+        <result property="domain" column="domain" jdbcType="CHAR"/>
+        <result property="syncedAt" column="synced_at" jdbcType="TIMESTAMP"/>
+        <result property="extraInfo" column="extra_info" jdbcType="VARCHAR"/>
+        <result property="uid" column="uid" jdbcType="CHAR"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- Query by ID -->
+    <select id="queryById" resultMap="HostDeviceMap">
+        select id, lcuuid, created_at, updated_at, deleted_at, type, state, name, alias, 
+               description, ip, hostname, htype, create_method, user_name, user_passwd, 
+               vcpu_num, mem_total, az, region, domain, synced_at, extra_info, uid, user_id
+        from host_device
+        where id = #{id} and deleted_at is null
+    </select>
+
+    <!-- Query with pagination and filtering -->
+    <select id="queryByPage" resultMap="HostDeviceMap">
+        select id, lcuuid, created_at, updated_at, deleted_at, type, state, name, alias, 
+               description, ip, hostname, htype, create_method, user_name, user_passwd, 
+               vcpu_num, mem_total, az, region, domain, synced_at, extra_info, uid, user_id
+        from host_device
+        <where>
+            deleted_at is null
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="alias != null and alias != ''">
+                and alias like concat('%', #{alias}, '%')
+            </if>
+            <if test="ip != null and ip != ''">
+                and ip like concat('%', #{ip}, '%')
+            </if>
+        </where>
+        order by id desc
+        limit (#{pageable.pageNumber} - 1) * #{pageable.pageSize} , #{pageable.pageSize}
+    </select>
+
+    <!-- Count total rows with filter conditions -->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from host_device
+        <where>
+            deleted_at is null
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <if test="alias != null and alias != ''">
+                and alias like concat('%', #{alias}, '%')
+            </if>
+            <if test="ip != null and ip != ''">
+                and ip like concat('%', #{ip}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

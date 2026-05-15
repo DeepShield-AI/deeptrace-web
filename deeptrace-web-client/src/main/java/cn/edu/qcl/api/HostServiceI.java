@@ -1,7 +1,10 @@
 package cn.edu.qcl.api;
 
+import cn.edu.qcl.dto.data.HostDeviceDTO;
 import cn.edu.qcl.dto.data.HostMetricTimeSeriesDTO;
+import cn.edu.qcl.dto.param.HostDevicePageQuery;
 import cn.edu.qcl.dto.param.HostMetricQueryParam;
+import com.alibaba.cola.dto.PageResponse;
 
 import java.util.List;
 
@@ -29,4 +32,22 @@ public interface HostServiceI {
      * @return List of HostMetricTimeSeriesDTO containing time series data with minute-level aggregation
      */
     List<HostMetricTimeSeriesDTO> queryHostMetricTimeSeries(HostMetricQueryParam queryParam);
+
+    /**
+     * Query host devices with pagination and filtering
+     * <p>
+     * Query host devices with support for filtering by user_id, name, alias, ip.
+     * Returns paginated results using PageResponse.
+     * </p>
+     *
+     * @param query the query parameters including:
+     *              pageNum - page number (0-based)
+     *              pageSize - page size
+     *              userId - filter by user ID (optional)
+     *              name - filter by host name (fuzzy match, optional)
+     *              alias - filter by alias (fuzzy match, optional)
+     *              ip - filter by IP (fuzzy match, optional)
+     * @return PageResponse containing list of HostDeviceDTO with pagination info
+     */
+    PageResponse<HostDeviceDTO> queryHostDevicePage(HostDevicePageQuery query);
 }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.qcl.mapper.mysql.AgentMapper">
+
+    <resultMap type="cn.edu.qcl.agent.AgentDO" id="AgentMap">
+        <result property="lcuuid" column="lcuuid" jdbcType="VARCHAR"/>
+        <result property="analyzerIp" column="analyzer_ip" jdbcType="VARCHAR"/>
+        <result property="arch" column="arch" jdbcType="VARCHAR"/>
+        <result property="archType" column="arch_type" jdbcType="BIGINT"/>
+        <result property="az" column="az" jdbcType="VARCHAR"/>
+        <result property="azName" column="az_name" jdbcType="VARCHAR"/>
+        <result property="completeRevision" column="complete_revision" jdbcType="VARCHAR"/>
+        <result property="controllerIp" column="controller_ip" jdbcType="VARCHAR"/>
+        <result property="cpuNum" column="cpu_num" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="ctrlIp" column="ctrl_ip" jdbcType="VARCHAR"/>
+        <result property="ctrlMac" column="ctrl_mac" jdbcType="VARCHAR"/>
+        <result property="curAnalyzerIp" column="cur_analyzer_ip" jdbcType="VARCHAR"/>
+        <result property="curControllerIp" column="cur_controller_ip" jdbcType="VARCHAR"/>
+        <result property="currentK8sImage" column="current_k8s_image" jdbcType="VARCHAR"/>
+        <result property="kernelVersion" column="kernel_version" jdbcType="VARCHAR"/>
+        <result property="launchServer" column="launch_server" jdbcType="VARCHAR"/>
+        <result property="licenseType" column="license_type" jdbcType="VARCHAR"/>
+        <result property="memorySize" column="memory_size" jdbcType="FLOAT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="os" column="os" jdbcType="VARCHAR"/>
+        <result property="podClusterName" column="pod_cluster_name" jdbcType="VARCHAR"/>
+        <result property="regionName" column="region_name" jdbcType="VARCHAR"/>
+        <result property="revision" column="revision" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="VARCHAR"/>
+        <result property="tapMode" column="tap_mode" jdbcType="BIGINT"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="vtapGroupLcuuid" column="vtap_group_lcuuid" jdbcType="VARCHAR"/>
+        <result property="vtapGroupName" column="vtap_group_name" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="errorInfo" column="error_info" jdbcType="LONGVARCHAR"/>
+        <result property="licenseFunctions" column="license_functions" jdbcType="LONGVARCHAR"/>
+        <result property="syncedAnalyzerAt" column="synced_analyzer_at" jdbcType="TIMESTAMP"/>
+        <result property="syncedControllerAt" column="synced_controller_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- Query with pagination and filtering -->
+    <select id="queryByPage" resultMap="AgentMap">
+        select lcuuid, analyzer_ip, arch, arch_type, az, az_name, complete_revision, controller_ip,
+               cpu_num, create_time, ctrl_ip, ctrl_mac, cur_analyzer_ip, cur_controller_ip,
+               current_k8s_image, kernel_version, launch_server, license_type, memory_size,
+               name, os, pod_cluster_name, region_name, revision, state, tap_mode, update_time,
+               vtap_group_lcuuid, vtap_group_name, user_id, error_info, license_functions,
+               synced_analyzer_at, synced_controller_at
+        from agent_basic
+        <where>
+            <if test="agentDO.lcuuid != null and agentDO.lcuuid != ''">
+                and lcuuid = #{agentDO.lcuuid}
+            </if>
+            <if test="agentDO.name != null and agentDO.name != ''">
+                and name like concat('%', #{agentDO.name}, '%')
+            </if>
+            <if test="agentDO.state != null and agentDO.state != ''">
+                and state = #{agentDO.state}
+            </if>
+            <if test="agentDO.userId != null">
+                and user_id = #{agentDO.userId}
+            </if>
+        </where>
+        order by create_time desc
+        limit ${(pageable.pageNumber - 1) * pageable.pageSize} , #{pageable.pageSize}
+    </select>
+
+    <!-- Count total rows with filter conditions -->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from agent_basic
+        <where>
+            <if test="agentDO.lcuuid != null and agentDO.lcuuid != ''">
+                and lcuuid = #{agentDO.lcuuid}
+            </if>
+            <if test="agentDO.name != null and agentDO.name != ''">
+                and name like concat('%', #{agentDO.name}, '%')
+            </if>
+            <if test="agentDO.state != null and agentDO.state != ''">
+                and state = #{agentDO.state}
+            </if>
+            <if test="agentDO.userId != null">
+                and user_id = #{agentDO.userId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

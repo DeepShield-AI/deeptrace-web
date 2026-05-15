@@ -1,10 +1,14 @@
 package cn.edu.qcl.host;
 
 import cn.edu.qcl.api.HostServiceI;
+import cn.edu.qcl.dto.data.HostDeviceDTO;
 import cn.edu.qcl.dto.data.HostMetricTimeSeriesDTO;
+import cn.edu.qcl.dto.param.HostDevicePageQuery;
 import cn.edu.qcl.dto.param.HostMetricQueryParam;
 import cn.edu.qcl.enums.HostMetricTypeEnum;
+import cn.edu.qcl.host.gateway.HostDeviceGateway;
 import cn.edu.qcl.mapper.clickhouse.ClickHouseMapper;
+import com.alibaba.cola.dto.PageResponse;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,9 @@ public class HostServiceImpl implements HostServiceI {
 
     @Resource
     private ClickHouseMapper clickHouseMapper;
+
+    @Resource
+    private HostDeviceGateway hostDeviceGateway;
 
     /**
      * Query host metric time series data
@@ -85,5 +92,34 @@ public class HostServiceImpl implements HostServiceI {
         if (!aggType.equals("avg") && !aggType.equals("max") && !aggType.equals("min")) {
             throw new IllegalArgumentException("Aggregation type must be one of: avg, max, min");
         }
+    }
+
+    /**
+     * Query host devices with pagination and filtering
+     *
+     * @param query the query parameters including:
+     *              pageNum - page number (0-based)
+     *              pageSize - page size
+     *              userId - filter by user ID (optional)
+     *              name - filter by host name (fuzzy match, optional)
+     *              alias - filter by alias (fuzzy match, optional)
+     *              ip - filter by IP (fuzzy match, optional)
+     * @return PageResponse containing list of HostDeviceDTO with pagination info
+     */
+    @Override
+    public PageResponse<HostDeviceDTO> queryHostDevicePage(HostDevicePageQuery query) {
+        log.info("Querying host devices with params: pageNum={}, pageSize={}, userId={}, name={}, alias={}, ip={}",
+                query.getPageIndex(), query.getPageSize(), query.getUserId(), query.getName(), query.getAlias(), query.getIp());
+
+        // Query total count
+        long totalCount = hostDeviceGateway.count(query);
+
+        // Query data list
+        List<HostDeviceDTO> dataList = hostDeviceGateway.queryByPage(query);
+
+        log.info("Host device query returned {} records, total count: {}", dataList.size(), totalCount);
+
+        // Build PageResponse
+        return PageResponse.of(dataList, (int) totalCount, query.getPageIndex(), query.getPageSize());
     }
 }
