@@ -1,7 +1,9 @@
 package cn.edu.qcl.web;
 
 import cn.edu.qcl.api.AgentServiceI;
+import cn.edu.qcl.dto.data.AgentConfigurationDTO;
 import cn.edu.qcl.dto.data.AgentDTO;
+import cn.edu.qcl.dto.param.AgentConfigurationPageQuery;
 import cn.edu.qcl.dto.param.AgentPageQuery;
 import com.alibaba.cola.dto.PageResponse;
 import jakarta.annotation.Resource;
@@ -59,5 +61,37 @@ public class AgentController {
         query.setUserId(userId);
 
         return agentServiceI.queryAgentPage(query);
+    }
+
+    /**
+     * Query agent configurations with pagination and filtering
+     * <p>
+     * Supports filtering by agent_lcuuid (exact match), user_id (exact match).
+     * Returns paginated results with total count.
+     * </p>
+     *
+     * @param pageIndex    Page number (1-based, default 1)
+     * @param pageSize     Page size (default 10)
+     * @param agentLcuuid  Filter by agent lcuuid - exact match (optional)
+     * @param userId       Filter by user ID - exact match (optional)
+     * @return PageResponse containing list of AgentConfigurationDTO with pagination info
+     */
+    @GetMapping("/configuration/list")
+    public PageResponse<AgentConfigurationDTO> queryAgentConfigurationPage(
+            @RequestParam(value = "pageIndex", required = false, defaultValue = "1") Integer pageIndex,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "agentLcuuid", required = false) String agentLcuuid,
+            @RequestParam(value = "userId", required = false) Long userId) {
+
+        log.info("Received agent configuration page query request: pageIndex={}, pageSize={}, agentLcuuid={}, userId={}",
+                pageIndex, pageSize, agentLcuuid, userId);
+
+        AgentConfigurationPageQuery query = new AgentConfigurationPageQuery();
+        query.setPageIndex(pageIndex);
+        query.setPageSize(pageSize);
+        query.setAgentLcuuid(agentLcuuid);
+        query.setUserId(userId);
+
+        return agentServiceI.queryAgentConfigurationPage(query);
     }
 }

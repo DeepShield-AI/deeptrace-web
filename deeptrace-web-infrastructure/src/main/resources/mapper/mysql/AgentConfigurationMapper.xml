@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.qcl.mapper.mysql.AgentConfigurationMapper">
+
+    <resultMap type="cn.edu.qcl.agent.AgentConfigurationDO" id="AgentConfigurationMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="lcuuid" column="lcuuid" jdbcType="VARCHAR"/>
+        <result property="agentLcuuid" column="agent_lcuuid" jdbcType="VARCHAR"/>
+        <result property="yaml" column="yaml" jdbcType="LONGVARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- Query with pagination and filtering -->
+    <select id="queryByPage" resultMap="AgentConfigurationMap">
+        select id, lcuuid, agent_lcuuid, yaml, user_id, created_at, updated_at
+        from agent_configuration
+        <where>
+            <if test="agentConfigurationDO.agentLcuuid != null and agentConfigurationDO.agentLcuuid != ''">
+                and agent_lcuuid = #{agentConfigurationDO.agentLcuuid}
+            </if>
+            <if test="agentConfigurationDO.userId != null">
+                and user_id = #{agentConfigurationDO.userId}
+            </if>
+        </where>
+        order by created_at desc
+        limit ${(pageable.pageNumber - 1) * pageable.pageSize} , #{pageable.pageSize}
+    </select>
+
+    <!-- Count total rows with filter conditions -->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from agent_configuration
+        <where>
+            <if test="agentConfigurationDO.agentLcuuid != null and agentConfigurationDO.agentLcuuid != ''">
+                and agent_lcuuid = #{agentConfigurationDO.agentLcuuid}
+            </if>
+            <if test="agentConfigurationDO.userId != null">
+                and user_id = #{agentConfigurationDO.userId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
