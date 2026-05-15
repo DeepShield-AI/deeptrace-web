@@ -3,9 +3,12 @@ package cn.edu.qcl.web;
 import cn.edu.qcl.api.AgentServiceI;
 import cn.edu.qcl.dto.data.AgentConfigurationDTO;
 import cn.edu.qcl.dto.data.AgentDTO;
+import cn.edu.qcl.dto.data.AgentUserConfigurationDTO;
 import cn.edu.qcl.dto.param.AgentConfigurationPageQuery;
 import cn.edu.qcl.dto.param.AgentPageQuery;
+import cn.edu.qcl.dto.param.AgentUserConfigurationQuery;
 import com.alibaba.cola.dto.PageResponse;
+import com.alibaba.cola.dto.SingleResponse;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -93,5 +96,33 @@ public class AgentController {
         query.setUserId(userId);
 
         return agentServiceI.queryAgentConfigurationPage(query);
+    }
+
+    /**
+     * Query the latest agent user configuration
+     * <p>
+     * Query the latest agent user configuration matching the filter criteria.
+     * Supports filtering by agent_lcuuid (required), user_id (optional).
+     * Only returns records with status 'pending' or 'success' (fixed condition).
+     * Returns the most recent configuration record.
+     * </p>
+     *
+     * @param agentLcuuid Filter by agent lcuuid - exact match (required)
+     * @param userId      Filter by user ID - exact match (optional)
+     * @return SingleResponse containing AgentUserConfigurationDTO or null if not found
+     */
+    @GetMapping("/user-configuration/latest")
+    public SingleResponse<AgentUserConfigurationDTO> queryLatestAgentUserConfiguration(
+            @RequestParam(value = "agentLcuuid") String agentLcuuid,
+            @RequestParam(value = "userId", required = false) Long userId) {
+
+        log.info("Received latest agent user configuration query request: agentLcuuid={}, userId={}",
+                agentLcuuid, userId);
+
+        AgentUserConfigurationQuery query = new AgentUserConfigurationQuery();
+        query.setAgentLcuuid(agentLcuuid);
+        query.setUserId(userId);
+
+        return agentServiceI.queryLatestAgentUserConfiguration(query);
     }
 }

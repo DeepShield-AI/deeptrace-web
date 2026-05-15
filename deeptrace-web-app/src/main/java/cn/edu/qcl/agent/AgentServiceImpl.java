@@ -3,11 +3,15 @@ package cn.edu.qcl.agent;
 import cn.edu.qcl.api.AgentServiceI;
 import cn.edu.qcl.dto.data.AgentConfigurationDTO;
 import cn.edu.qcl.dto.data.AgentDTO;
+import cn.edu.qcl.dto.data.AgentUserConfigurationDTO;
 import cn.edu.qcl.dto.param.AgentConfigurationPageQuery;
 import cn.edu.qcl.dto.param.AgentPageQuery;
+import cn.edu.qcl.dto.param.AgentUserConfigurationQuery;
 import cn.edu.qcl.agent.gateway.AgentConfigurationGateway;
 import cn.edu.qcl.agent.gateway.AgentGateway;
+import cn.edu.qcl.agent.gateway.AgentUserConfigurationGateway;
 import com.alibaba.cola.dto.PageResponse;
+import com.alibaba.cola.dto.SingleResponse;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,9 @@ public class AgentServiceImpl implements AgentServiceI {
 
     @Resource
     private AgentConfigurationGateway agentConfigurationGateway;
+
+    @Resource
+    private AgentUserConfigurationGateway agentUserConfigurationGateway;
 
     /**
      * Query agents with pagination and filtering
@@ -96,5 +103,37 @@ public class AgentServiceImpl implements AgentServiceI {
 
         // Build PageResponse
         return PageResponse.of(dataList, (int) totalCount, query.getPageSize(), query.getPageIndex());
+    }
+
+    /**
+     * Query the latest agent user configuration
+     *
+     * @param query the query parameters including:
+     *              agentLcuuid - filter by agent lcuuid (exact match, required)
+     *              userId - filter by user ID (exact match, optional)
+     *              status - filter by status (supports multiple values separated by comma)
+     * @return SingleResponse containing AgentUserConfigurationDTO or null if not found
+     */
+    @Override
+    public SingleResponse<AgentUserConfigurationDTO> queryLatestAgentUserConfiguration(AgentUserConfigurationQuery query) {
+        log.info("Querying latest agent user configuration with params: agentLcuuid={}, userId={}",
+                query.getAgentLcuuid(), query.getUserId());
+
+        AgentUserConfigurationDTO result;
+        try {
+            result = agentUserConfigurationGateway.queryLatest(query);
+        } catch (Exception e) {
+            log.error("Failed to query latest agent user configuration with params: agentLcuuid={}, userId={}",
+                    query.getAgentLcuuid(), query.getUserId(), e);
+            throw e;
+        }
+
+        if (result != null) {
+            log.info("Found latest agent user configuration: id={}, lcuuid={}", result.getId(), result.getLcuuid());
+        } else {
+            log.info("No agent user configuration found matching the criteria");
+        }
+
+        return SingleResponse.of(result);
     }
 }
